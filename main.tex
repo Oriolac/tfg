@@ -1,0 +1,152 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{latexsym}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+%\usepackage[catalan]{babel}
+ \usepackage[english]{babel}
+\usepackage{microtype}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{datetime}
+\usepackage{multicol}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{vmargin}
+\usepackage{wrapfig}
+\usepackage{subfiles}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz-cd}
+\usepackage{multirow}
+\usepackage{pgffor}
+\usepackage{iflang}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
+
+\newcommand{\nc}{\newcommand}
+\nc{\supindex}{\textsuperscript}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% CONFIG FILE %%%%%%%%%%%%%
+
+\nc{\mytitle}{Implementació d'un criptosistema basat en el problema del logaritme discret en ECC en comptadors intel·ligents}
+\nc{\mysubtitle}{Bayesian Inference}
+\nc{\authors}{Oriol Alàs Cercós}
+\nc{\datetime}{15\supindex{th} of May, 2020}
+\nc{\assignatura}{Aprenentatge i Raonament Automàtic}
+\nc{\professorat}{Ramón Béjar}
+
+% Per separar professors, utilitzar ','
+% 	Ex: Maria, Joan, Pere
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%  LANGUAGE   %%%%%%%%%%%%%
+
+\newcommand{\tr}{\IfLanguageName{english}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% MATH %%%%%%%%%%%%%%%%
+
+\nc{\prob}[1]{P({#1})}
+\nc{\probl}[2]{P({#1}|{#2})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% TREE CREATOR %%%%%%%%%%%%
+
+\setpapersize{A4}
+\setmargins{2.5cm}  % margen izquierdo
+{1.5cm}             % margen superior
+{16.5cm}            % anchura del texto
+{23.42cm}           % altura del texto
+{10pt}              % altura de los encabezados
+{1cm}               % espacio entre el texto y los encabezados
+{0pt}               % altura del pie de página
+{2cm}               % espaci\title{Determinització d'un autòmat finit}
+\author{Oriol Alàs Cercós}
+\date{29 d'Abril del 2019}
+
+\def\contentsname{Índex}
+\begin{document}
+	
+
+\begin{titlepage}
+\begin{figure}[htb]
+\begin{center}
+	\includegraphics[width=5cm]{imgs/UDL.png}
+   	\vspace*{\stretch{1.0}}
+   	\\
+   	\medskip
+   	\begin{center}
+   		\noindent\rule{16.5cm}{0.4pt}
+   		\medskip 
+   		\\
+      	\Huge\textbf{\mytitle}
+      	\\\medskip 	\Large  \mysubtitle
+      \\
+      	
+      	\noindent\rule{16.5cm}{0.4pt}
+      	\\
+      	\bigskip
+      	\normalsize{\tr{Made by}{Realitzat per:}}
+      	\\
+      	\large\textit{\authors}
+      	\\
+      	\setlength{\parskip}{1em}
+      	\normalsize{\tr{Delivery}{Data de lliurament:}}
+      	\\
+      	\large{\datetime}
+   	\end{center}
+   	\vspace*{\stretch{2.0}}
+\end{center}
+\end{figure}
+\begin{flushright}
+Universitat de Lleida
+\\
+Escola Politècnica Superior
+\\
+Grau en Enginyeria Informàtica
+\\
+\assignatura
+\\
+\medskip
+\textbf{\tr{Professorate:}{Professorat:}}
+\\
+\foreach \n in \professorat{\n\\}
+\end{flushright}
+\thispagestyle{empty} 
+\end{titlepage}
+\tableofcontents
+\thispagestyle{empty} 
+%\newpage
+\listoffigures
+\listoftables
+\thispagestyle{empty}
+\newpage
+\section{Introducció}
+Els comptadors intel·ligents són dispositius domèstics que recullen i envien electricitat
+consum a un proveïdor d’energia en intervals reduïts. Amb aquests,
+es poden fer millor prediccions i tendències de consum de manera que la producció pugui estar més a prop del que realment és, cosa que comporta una facturació precisa i preus personalitzats per cada lloc domèstic.
+\\
+\\
+Tot i que és beneficiosa a gran escala, la quantitat d'informació que proporciona una sola casa es pot utilitzar per fer prediccions de la vida a la llar, com quan arriben a casa, veuen la televisió o se'n van al llit.
+\\
+L'objectiu d'aquesta memòria és recollir el desenvolupament de la implementació del criptosistema realitzada en Java.
+% Per a aquests problemes, el sistema descrit a \ cite {recsi}
+%va ser dissenyat. Aquest article descriu una implementació del criptosistema per estudiar els costos a temps del criptosistema. La implementació es pot trobar a \ cite {smart}% TODO add github link
+%, i per funcionar correctament necessita la biblioteca al \ cite {ciglib}
+\end{document}
