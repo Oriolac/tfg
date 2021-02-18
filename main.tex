@@ -1,11 +1,12 @@
+% !TeX spellcheck = ca
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
 \usepackage{latexsym}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
-%\usepackage[catalan]{babel}
- \usepackage[english]{babel}
+\usepackage[catalan]{babel}
+%\usepackage[english]{babel}
 \usepackage{microtype}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
@@ -34,22 +35,26 @@
 \usepackage{multirow}
 \usepackage{pgffor}
 \usepackage{iflang}
+\usepackage{varioref}
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
 
 \newcommand{\nc}{\newcommand}
 \nc{\supindex}{\textsuperscript}
+\renewcommand{\baselinestretch}{1.5}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% CONFIG FILE %%%%%%%%%%%%%
 
-\nc{\mytitle}{Implementació d'un criptosistema basat en el problema del logaritme discret en ECC en comptadors intel·ligents}
+\nc{\mytitle}{Implementació d'un sistema criptogràfic per l'enviament del consum en sistemes de comptadors intel·ligents}
 \nc{\mysubtitle}{Bayesian Inference}
 \nc{\authors}{Oriol Alàs Cercós}
 \nc{\datetime}{15\supindex{th} of May, 2020}
-\nc{\assignatura}{Aprenentatge i Raonament Automàtic}
-\nc{\professorat}{Ramón Béjar}
+\nc{\assignatura}{Treball Final de Grau}
+\nc{\professorat}{Francesc Sebé Feixas}
 
 % Per separar professors, utilitzar ','
 % 	Ex: Maria, Joan, Pere
@@ -69,14 +74,7 @@
 %%%%%%%%%%%%% TREE CREATOR %%%%%%%%%%%%
 
 \setpapersize{A4}
-\setmargins{2.5cm}  % margen izquierdo
-{1.5cm}             % margen superior
-{16.5cm}            % anchura del texto
-{23.42cm}           % altura del texto
-{10pt}              % altura de los encabezados
-{1cm}               % espacio entre el texto y los encabezados
-{0pt}               % altura del pie de página
-{2cm}               % espaci\title{Determinització d'un autòmat finit}
+
 \author{Oriol Alàs Cercós}
 \date{29 d'Abril del 2019}
 
@@ -92,15 +90,13 @@
    	\\
    	\medskip
    	\begin{center}
-   		\noindent\rule{16.5cm}{0.4pt}
-   		\medskip 
-   		\\
-      	\Huge\textbf{\mytitle}
-      	\\\medskip 	\Large  \mysubtitle
-      \\
+   		\medskip\bigskip\bigskip\bigskip
+   		
+      	\huge\textbf{\mytitle}
+      	\\\medskip 	\Large  
       	
-      	\noindent\rule{16.5cm}{0.4pt}
-      	\\
+      	
+      	\bigskip\bigskip\bigskip
       	\bigskip
       	\normalsize{\tr{Made by}{Realitzat per:}}
       	\\
@@ -124,7 +120,7 @@ Grau en Enginyeria Informàtica
 \assignatura
 \\
 \medskip
-\textbf{\tr{Professorate:}{Professorat:}}
+\textbf{\tr{Professorate:}{Tutor:}}
 \\
 \foreach \n in \professorat{\n\\}
 \end{flushright}
@@ -137,16 +133,81 @@ Grau en Enginyeria Informàtica
 \listoftables
 \thispagestyle{empty}
 \newpage
-\section{Introducció}
-Els comptadors intel·ligents són dispositius domèstics que recullen i envien electricitat
-consum a un proveïdor d’energia en intervals reduïts. Amb aquests,
-es poden fer millor prediccions i tendències de consum de manera que la producció pugui estar més a prop del que realment és, cosa que comporta una facturació precisa i preus personalitzats per cada lloc domèstic.
+\part{Introducció}
+Els comptadors intel·ligents són dispositius domèstics que recullen i envien 
+el consum de l'electricitat a un proveïdor d’energia en intervals de temps reduïts.
 \\
 \\
-Tot i que és beneficiosa a gran escala, la quantitat d'informació que proporciona una sola casa es pot utilitzar per fer prediccions de la vida a la llar, com quan arriben a casa, veuen la televisió o se'n van al llit.
+A causa d'aquest constant enviament d'informació,
+es poden fer millors prediccions i tendències de consum de manera que la producció pugui estar més a prop de l'energia que es necessita, és a dir, la producció d'energia es pot ajustar més al real consum d'aquesta. A més a més, el distribuïdor d'energia no té la necessitat de revisar manualment el consum i la lectura del comptador elèctric en cada llar. En referència al consumidor, aquest pot saber el seu consum elèctric en tot moment i la seva despesa de manera més precisa amb possibles preus personalitzats.
 \\
-L'objectiu d'aquesta memòria és recollir el desenvolupament de la implementació del criptosistema realitzada en Java.
-% Per a aquests problemes, el sistema descrit a \ cite {recsi}
-%va ser dissenyat. Aquest article descriu una implementació del criptosistema per estudiar els costos a temps del criptosistema. La implementació es pot trobar a \ cite {smart}% TODO add github link
-%, i per funcionar correctament necessita la biblioteca al \ cite {ciglib}
+\\
+Tot i que és beneficiosa a gran escala, la quantitat d'informació que proporciona una sola llar es pot utilitzar per fer prediccions de la vida quotidiana, com per exemple: quan arriben a casa, miren la televisió o se'n van al llit. Per tant, és important mantenir les dades de lectura privades i protegides de qualsevol atac. Arran d'això, s'han realitzat diverses propostes, una d'elles ha estat creada pel grup de recerca Criptografia i Grafs de la Universitat de Lleida.
+\\\\
+L'objectiu principal d'aquesta memòria és recollir el desenvolupament de la simulació d'aquesta proposta per tal de resoldre el problema anteriorment explicat. No obstant això, es necessita un assoliment dels conceptes que envolten el tema per poder entendre l'actual solució i la seva implementació. Així doncs, els objectius del treball seran:
+\begin{itemize}
+	\item Posar en context l'encriptació ElGamal.
+	\item Estudiar la solució proposada.
+	\item Implementar un client que simuli un comptador intel·ligent.
+	\item Implementar un servidor que simuli una subestació d'un barri de comptadors.
+	\item Realitzar un estudi dels costs.
+\end{itemize}
+Abans de submergir-se en detalls de la solució proposada, en la Part \Cref{part:criptografia} s'endinsarà en el món de la criptografia i s'explicarà l'encriptació asimètrica i homomòrfica. A més a més, es detallarà el sistema en què es basa la nostra proposta, ElGamal. En la \Cref{part:propostes},  s'introduirà una visió general i es plantejaran les diferents propostes per tal de solucionar la privacitat dels usuaris. A més a més, s'explicarà de manera formal el protocol i s'establiran els requeriments. Un cop havent detallat la proposta, es passarà a l'explicació de la implementació i el disseny del programa en la \Cref{part:disseny}. Finalment, en la \Cref{part:analisis} es realitzarà l'anàlisis del programa gràcies a resultats experimentals.
+\part{Criptografia}\label{part:criptografia}
+\section{Encriptació simètrica i asimètrica}
+En el nostre cas, es vol que els comptadors intel·ligents puguin encriptar les seves dades però només 
+Per tal que qualsevol individu pugui encriptar però només un cert conjunt pugui desencriptar el missatge és necessari l'ús d'encriptació asimètrica.
+\subsection{ElGamal}
+La criptografia que s'utilitzarà en aquest treball es basarà en el problema del logaritme discret.
+\section{Encriptació homomòrfica}
+En un sistema agregatiu, es voldrà que la subestació pugui desxifrar dades en conjunt però, en cas que es vulgui saber només les dades d'un individu, aquesta no ho pugui fer.
+\\\\
+Una funció és homomòrfica, si donada la funció $f: G \rightarrow H$:
+\[f(s_1) + f(s_2) = f(s_1+s_2)\]
+Donada aquesta funció, també es pot demostrar que:
+\begin{itemize}
+	\item $f(e_a)$
+\end{itemize}
+En el cas de ElGamal, veiem que:
+\begin{equation*}
+\begin{aligned}
+	E_y(m_1) \cdot E_y(m_1) =& \ (c_1 \cdot c_2, d_1 \cdot d_2)\\
+	=& \ (g^{r_1 + r_2}, m_1 \cdot m_2 \cdot y^{r_1 + r_2} ) \\
+	=& \ E_y(m_1 \cdot m_2)
+\end{aligned}
+\end{equation*}
+\part{Propostes}\label{part:propostes}
+
+En l'actualitat s'ha proposat tres tipus de mecanismes per tal de preservar la privacitat de les lectures dels comptadors intel·ligents:
+\begin{itemize}
+	\item \textbf{Pertorbatiu}. Els comptadors afegeixen un soroll a la lectura del consum abans de transmetre-ho a l'estació. D'aquesta manera, aquest últim només obté la versió transformada del consum de la llar. Aquest tipus de solucions requereixen un ajustament per tal de compensar tant la privacitat com la precisió de les dades.
+	\item \textbf{Anònim}. El consum és transmès de tal forma que el proveïdor no pot saber quina és la identitat de la llar mitjançant, per exemple, l'ús de pseudònims.
+	\item \textbf{Agregatiu}. Els comptadors s'agrupen en grups per tal d'unir les seves lectures abans de transmetre-les a la subestació. Les dades solen ser agregades gràcies a un \textit{dealer} o distribuïdor, o fent ús de criptosistemes homomòrfics.
+\end{itemize}
+\section{L'actual proposta}
+El protocol proposat es basa en un sistema agregatiu, ja que la subestació només tindrà a la seva disposició el sumatori de lectures dels comptadors que pertanyin al seu conjunt. Per tal d'aconseguir només la lectura total del barri tenint les dades de cada llar protegides, es fa ús d'encriptació homomòrfica, utilitzant la encriptació d'El-Gamal.
+\\\\
+Encara que en altres propostes agregatives s'hagi optat per ús d'un distribuïdor de confiança a l'hora d'establir les claus privades dels comptadors intel·ligents, en el sistema proposat s'opta per realitzar una configuració senzilla que no impliqui una gran complexitat algorítmica. D'aquesta manera, el sistema intenta prevenir que una possible vulnerabilitat al distribuïdor de claus pugui alterar la seguretat del protocol i violar la privacitat en les lectures.
+\\\\
+Un cop feta la configuració de les claus, ja només queda l'enviament de les lectures xifrades a la subestació.
+Així doncs, es pot diferenciar dos fases ben diferenciades d'aquest protocol:
+\begin{enumerate}
+\item Fase d'establiment de les claus (KS\footnote{Key Stablishment}) privades dels comptadors. En aquesta fase, la subestació haurà de trobar la clau per poder computar després les lectures en la següent fase.
+\item Fase de transmissió del consum (CT\footnote{Consumption Transmission}). Un cop s'envien totes les lectures xifrades, mitjançant la clau de la subestació es podrà trobar el missatge xifrat sense dependre de les claus privades dels comptadors. D'aquesta manera, només caldrà realitzar el logaritme discret per trobar el sumatori de lectures.
+\end{enumerate}
+\subsection{Setup}
+Abans d'engegar el sistema, es necessita que tant els comptadors com la subestació utilitzin el mateix cos i element generador per tal de xifrar i desxifrar correctament els missatges. Per tant, s'haurà d'elegir:
+\begin{itemize}
+	\item Corba el·líptica $E$ definida sobre un cos primer $F_q$ d'ordre $p$ d'almenys 256 bits.
+	\item Un punt $P \in E(F_q)$, que serà l'element generador de la corba.
+\end{itemize}
+A més a més, es necessitarà l'ús d'una funció hash %TODO: Explicar funció hash}
+$H$ que retorni un punt $Q \in E(F_q)$ donat un element $e \in F_q$. Això ens permetrà operar amb elements discrets com si fossin punts de la corba. 
+\subsection{Key Stablishment}\label{section:ks}
+La configuració de les claus s'ha de realitzar a l'inici del sistema i cada cop que hi hagi un canvi en el conjunt de comptadors del barri, per exemple, quan s'afegeix o s'elimina un comptador. Així doncs, totes les claus privades dels participants vigents d'un barri han de formar part de la clau de la subestació. 
+\subsection{Consumption Transmission}\label{section:ct}
+\part{Disseny de la implementació}\label{part:disseny}
+
+\part{Anàlisis}\label{part:analisis}
+
 \end{document}
