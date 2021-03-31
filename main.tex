@@ -35,6 +35,7 @@
 \usepackage{tikz-cd}
 \usepackage{multirow}
 \usepackage{pgffor}
+\usepackage{enumitem}
 \usepackage{iflang}
 \usepackage{varioref}
 \usepackage{hyperref}
@@ -155,7 +156,7 @@ L'objectiu principal d'aquesta memòria és recollir el desenvolupament de la si
 	\item Realitzar un estudi dels costs.
 \end{itemize}
 Abans de submergir-se en detalls de la solució proposada, en la \Cref{part:criptografia} s'endinsarà en el món de la criptografia i s'explicarà l'encriptació asimètrica i homomòrfica. A més a més, es detallarà el sistema en què es basa la nostra proposta, ElGamal. En la \Cref{part:propostes},  s'introduirà una visió general i es plantejaran les diferents propostes per tal de solucionar la privacitat dels usuaris. A més a més, s'explicarà de manera formal el protocol i s'establiran els requeriments. Un cop havent detallat la proposta, es passarà a l'explicació de la implementació i el disseny del programa en la \Cref{part:disseny}. Finalment, en la \Cref{part:analisis} es realitzarà l'anàlisis del programa gràcies a resultats experimentals.
-\part{Criptografia i teoria de la computació}\label{part:criptografia}
+\newpage\part{Criptografia i teoria de la computació}\label{part:criptografia}
 \section{Encriptació simètrica i asimètrica}
 Un criptosistema és un algorisme que transforma un
 missatge intel·ligible a un altre inintel·ligible i
@@ -194,19 +195,85 @@ Sigui $G$ un grup cíclic finit amb l'operació de multiplicació i l'element d'
 \[a = g^k, \quad k \in \mathbb{Z^+} \] 
 Sabent el valor de $a$ i $g$ és computacionalment costós trobar $k$, ja que s'ha de realitzar una búsqueda de totes les possibles solucions fins trobar:
 \[k = log_g(a)\]
+\subsection{Classificació}
 Tot i que el problema de la descomposició en factors primers i el del logaritme discret són problemes diferents, en cap dels dos es coneix un algorisme eficient si no és realitzat per un ordinador quàntic. Els dos problemes estan catalogats actualment com problemes \textit{NP}  però no estan considerats \textit{NP-Complets} perquè no s'ha trobat una forma de reduir aquests problemes a un problema NP-Complet en temps polinomial.
+\subsection{Intercanvi de claus Diffie-Hellman}
+Diffie-Hellman \cite{diffie-hellman} és un mètode d'intercanvi de claus criptogràfiques de manera segura usant un canal obert que es basa en el problema del logaritme discret. Tradicionalment, la comunicació xifrada requeria l'intercanvi de claus per un medi físic segur. En comptes d'això,  Whitfield Diffie and Martin Hellman van dissenyar un sistema que permetia que les dues parts no tinguessin coneixements previs un de l'altre a l'hora d'establir una clau secreta entre les dues entitats.
+\\
+\\
+Posem d'exemple dos persones (Alice i Bob) que es volen comunicar de manera secreta i es volen posar d'acord sobre un nombre com a clau per tal de xifrar la conversa. Sigui $G$ un grup multiplicatiu d'ordre $q$ i sent $g$ un generador de $G$, $\quad G = \langle g \rangle$, ells dos tindran la seva contribució secreta $a$ i $b$ a la clau pública $K$. Cada un dels participants calcularan $S_i = g^{s_i} $. D'aquesta manera, Alice i Bob computaran $A = g^a$ i $B = g^b$ respectivament. La clau pública, per tal de xifrar els missatges a la seva conversa, serà $ K = g^{ab} = A^b = B^a $. L'exemple actual està realitzat entre només dos entitats, però per regla general:
+\begin{enumerate}
+	\item Cada participant $i \in P \ | \ P = \{1, 2, \dots, n\}$, éssent $n$ el nombre de participants, té al seva clau secreta $s_i \in G$.
+	\item Cada participant $i$ calcularà i enviarà la seva clau pública $S_i = g^{s_i}$ al participant $(i+1)$.
+	\item Cada participant $(i + 1)$ calcularà $(S_{i})^{s_{i + 1}}$ i li enviarà al participant posterior $(i + 2)$. Aquest procediment es realitzarà $n -1$ vegades, és a dir, fins arribar al participant anterior $(i -1)$ al propietari de la clau $S_i$.
+	\item D'aquesta manera, la clau pública del sistema serà el resultat posar posar $g$ a la potència de totes les claus privades:
+	\[K = g^{\prod_{i}^{n} s_i}\]
+\end{enumerate}
 \subsection{ElGamal}
-Una aplicació basada en el problema del logaritme discret és el criptosistema asimètric ElGamal.
+Una altra aplicació basada en el problema de solucionar el logaritme discret en un grup és el criptosistema asimètric ElGamal \cite{elgamal}. ElGamal proporciona certa aleatorietat que dificultarà a possibles atacs de força bruta centrats en generar totes les possibles encriptacions. No obstant això, té l'inconvenient que la llargada del xifrat serà el doble de llarg que el missatge. La seva configuració és donada per:
+\begin{itemize}
+	\item Un grup abelià $G(+, \cdot)$ d'ordre $n$ que tingui una factorització llarga. 
+	\item L'element generador $g \in G$.
+	\item La clau privada $d \in [1, n-1]$ que també serà la informació trampa.
+	\item La clau pública $h \in G \ | \ h = g^d$.
+\end{itemize}
+\subsubsection{Encriptació}
+L'encriptació estarà en funció de la clau pública $h \in G$ i el missatge $m$ i retornarà una tupla $c \in G \times G$.
+\[ E_h : G \rightarrow G \times G \]
+\begin{enumerate}
+	\item S'escolleix un enter aleatori dins del rang $r \in [1, n-1]$.
+	\item Es computa $c_1 \in G \quad tq. \quad c_1 = g^r$.
+	\item Es computa $c_2 \in G \quad tq. \quad c_2 = m \cdot h^r$.
+	\item El missatge xifrat serà la parella de valors $c = (c_1, c_2)$.
+\end{enumerate}
+El primer component del text xifrat $c_1$ es diu \textit{pista}, ja que conté valor aleatori $k$, que no és conegut pel destinatari. Per desencriptar, s'utilitzarà la pista per a l'extracció de text que es troba en el segon component.
+\subsubsection{Desencriptació}
+La desencriptació necessitarà la clau privada $d \in G$ i el text xifrat $c = (c_1, c_2)$ i retornarà el missatge.
+\[D_h : G \times G \rightarrow G \] 
+Sabent que $c_1 = g^r$ i $c_2 = m \cdot h^r$ i que $c_2$ és qui té el missatge i $c_1$ és qui té la pista sobre el nombre aleatori $k$, es pot comprovar que:
+\begin{equation*}
+	\begin{aligned}
+		m =& \ c_2 (c_1^d)^{-1}	= \frac{c_2}{c_1^d}	\\
+		=& \ \frac{m \cdot h^r}{(g^r)^d} = \frac{m \cdot h^r}{(g^d)^r}\\
+		=& \ \frac{m \cdot h^r}{h^r} = m
+	\end{aligned}
+\end{equation*}
+És a dir, per trobar el missatge $m$ es realitzarà:
+\[ m = \ c_2 (c_1^d)^{-1} \]
 \subsection{Pollard's Lambda}
+J. M. Pollard \cite{pollard} va descriure dos algoritmes per resoldre el logaritme discret: el mètode \textit{Rho} i el mètode \textit{Lambda} o també anomenat \textit{Kangaroo} \cite{kangaroo}. El mètode \textit{Lambda } relaxa una mica el problema, ja que, donat el grup cíclic $G$, es pretén resoldre el logaritme donat un interval entre uns llindars:
+\[g^k = a, \quad L \le k \le U\]
+Per tal de resoldre-ho, es creen dos seqüències que, al trobar-se en un punt vol dir que s'ha trobat la potència que s'està buscant. La metàfora rau en dos cangurs (les seqüències), un mans i l'altre salvatge, es situen en un punt que sabem i en un que no respectivament. Quan vagin saltant i es trobin, sabent el comportament del salvatge podrem veure a quin punt estava situat al principi.
+\begin{enumerate}
+	\item S'escolleix una funció $f$ pseudoaleatòria que mapejarà els elements del grup a un conjunt petit d'enters positius $S$ denominats els salts:
+	\[f : G \rightarrow S, \qquad S = \{s_1, \dots, s_n\}\]
+	\item Tenint $b = U - 1$, es computa la primera seqüència tal que:
+	\[x_0 = g^b, \qquad x_{i+1} = x_i \cdot g^{f(x_i)}, \quad \ i \in \{1, 2, \dots\}\]
+	En aquesta seqüència, sabem a quin valor estem realitzant la potència sobre $g$, és a dir, seria el cangur mans.
+	\item Es computa el sumatori dels elements en els salts aleatoris i s'observa que:
+	\[d = \sum_{i=0}^{N - 1} f(x_i)\]
+	\[x_N = x_0 \cdot g^d = g^{b + d}\]
+	\item La segona seqüència, que correspondrà al cangur salvatge, vindrà donada per:
+	\[y_0 = a, \qquad y_{i+1} = y_i \cdot g^{f(y_i)}, \qquad i \in \{1, 2, \dots\}\]
+	i estarà acompanyada per la seqüència d'enters $\{d_0, d_1, \dots \}$:
+	\[d_n = \sum_{i=0}^{n}f(y_i)\]
+	La $d_i$ es pot entendre com la distància en que el viatja el nostre algoritme del cangur salvatge en $i$ passos. A més a més, es pot observar que $y_i = y_0 \cdot g^{d_i} = a \cdot g^{d_i} = g^{k} \cdot g^{d_i}$.
+	\item La computació pararà en el moment que:
+	\begin{enumerate}[label=(\Alph*)]
+		\item Quan $y_j = x_N$ per alguna $j$, podem observar que:
+		\[x_N = y_j \Longrightarrow g^{b + d} = g^{k + d_j} \Longrightarrow g^k = g^{b + d - d_j} \Longrightarrow k = b + d - d_j\]
+		\item Quan $d_i > b - a + d $, és a dir, s'ha sobrepassat la distància a realitzar $d_i > g^b - g^k + d$, l'algoritme ha fallat en trobar $k$, de manera que s'ha de tornar a començar canviant el conjunt $S$ i/o la funció $f$.
+	\end{enumerate}
+\end{enumerate}
 \section{Encriptació homomòrfica}\label{subsec:homomorfism}
 L'encriptació homomòrfica ens permetrà poder operar amb els missatges sense haver de desxifrar-los ni sense perdre el seu valor.
-Una funció és homomòrfica, si donada la funció $f: G \rightarrow H$:
+Per definició, una funció és homomòrfica, si donada la funció $f: G \rightarrow H$:
 \[f(s_1) + f(s_2) = f(s_1+s_2)\]
 %Donada aquesta funció, també es pot demostrar que:
 %\begin{itemize}
 %	\item $f(e_a)$
 %\end{itemize}
-En el cas de ElGamal, veiem que:
+Es pot comprovar que la funció d'encriptació d'ElGamal es homomòrfica d'aquesta manera:
 \begin{equation*}
 \begin{aligned}
 	E_y(m_1) \cdot E_y(m_1) =& \ (c_1 \cdot c_2, d_1 \cdot d_2)\\
@@ -214,7 +281,7 @@ En el cas de ElGamal, veiem que:
 	=& \ E_y(m_1 \cdot m_2)
 \end{aligned}
 \end{equation*}
-En un sistema agregatiu, es voldrà que la subestació pugui desxifrar dades en conjunt però, en cas que es vulgui saber només les dades d'un individu mitjançant el seu missatge xifrat, aquesta no ho pugui fer. Per aconseguir-ho, un cas és afegir un cert soroll al missatge a l'hora de xifrar-lo, que després gràcies a la resta participants es pugui contrarestar. Per posar un exemple, donem el cas on dos individus (\textit{A} i \textit{B}) es volen comunicar de manera agregativa, a un tercer (\textit{C}) però sense donar el seu propi missatge i suposem que els tres tenen a disposició d'un sistema criptogràfic usant encriptació homomòrfica. Si \textit{A} i \textit{B} es posen d'acord i creen una clau pel tercer de manera que:
+En un sistema agregatiu, es voldrà que la subestació pugui desxifrar dades en conjunt però, en cas que es vulgui saber només les dades d'un individu mitjançant el seu missatge xifrat i vulnerar la seva privacitat, aquesta no ho pugui fer. Per aconseguir-ho, un cas és afegir un cert soroll al missatge a l'hora de xifrar-lo, que després gràcies a la resta participants es pugui contrarestar. Per posar un exemple, donem el cas on dos individus (\textit{A} i \textit{B}) es volen comunicar de manera agregativa, a un tercer (\textit{C}) però sense donar el seu propi missatge i suposem que els tres tenen a disposició d'un sistema criptogràfic usant encriptació homomòrfica. Si \textit{A} i \textit{B} es posen d'acord i creen una clau pel tercer de manera que:
 \begin{enumerate}
 	\item Configuració:
 	\begin{itemize}
@@ -226,8 +293,7 @@ En un sistema agregatiu, es voldrà que la subestació pugui desxifrar dades en 
 	\item Quan \textit{C} desencripti $D(c_A + c_B) = D(c_A) + D(c_B) = m_A + m_B + k_A + k_B$, només haurà de sumar $k_C$ per trobar el valor agregat d'\textit{A} i \textit{B}.
 \end{enumerate}
 \[D(c_A + c_B) - k_C = m_A + m_B\]
-\part{Propostes}\label{part:propostes}
-
+\newpage\part{Propostes}\label{part:propostes}
 En l'actualitat s'ha proposat tres tipus de mecanismes per tal de preservar la privacitat de les lectures dels comptadors intel·ligents:
 \begin{itemize}
 	\item \textbf{Pertorbatiu}. Els comptadors afegeixen un soroll a la lectura del consum abans de transmetre-ho a l'estació. D'aquesta manera, aquest últim només obté la versió transformada del consum de la llar. Aquest tipus de solucions requereixen un ajustament per tal de compensar tant la privacitat com la precisió de les dades.
@@ -238,9 +304,7 @@ En l'actualitat s'ha proposat tres tipus de mecanismes per tal de preservar la p
 La protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la subestació només sabrà el valor en conjunt d'un barri de comptadors agregats, és a dir, el sumatori de cadascuna de les seves lectures. En aquesta proposta, es vol utilitzar una clau pública per tal d'encriptar les dades i, gràcies a la propietat homomòrfica d'ElGamal, només poder rebre el resultat en conjunt.
 \subsection{Procediment}
 \subsubsection{Establiment de clau pública Diffie-Hellman}
-Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. Posem d'exemple dos persones (Alice i Bob) que es volen comunicar de manera secreta i es volen posar d'acord sobre un nombre com a clau per tal de xifrar la conversa. Sigui $G$ un grup multiplicatiu d'ordre $q$ i sent $g$ un generador de $G$, $\quad G = \langle g \rangle$, ells dos tindran la seva contribució secreta a la clau pública $a$ i $b$ i calcularan $A = g^a$ i $B = g^b$. La clau pública per tal de xifrar els missatges a la seva conversa, serà $ K = g^{ab} = A^b = B^a $.\\
-\\
-De manera similar, \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{Creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
+Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. Busom \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{Creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
 \subsubsection{Transmissió del consum}
 No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades.
 \begin{enumerate}
@@ -317,10 +381,8 @@ La transmissió dels comptadors intel·ligents a la subestació es realitza de m
 \subsection{Patró Màquina Estat}
 \subsubsection{RECSI}
 \subsubsection{Busom}
-\subsection{Algorismes de computació del logaritme discret}
-\subsubsection{Força Bruta}
-\subsubsection{Pollard's Lambda}
 \part{Anàlisis}\label{part:analisis}
+\subsection{Algorismes de computació del logaritme discret}
 
 \bibliography{document}
 \bibliographystyle{unsrt}

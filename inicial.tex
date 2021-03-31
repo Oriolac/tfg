@@ -1,0 +1,267 @@
+% !TeX spellcheck = ca
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{latexsym}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[catalan]{babel}
+%\usepackage[english]{babel}
+\usepackage{microtype}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{datetime}
+\usepackage{multicol}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{braket}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{vmargin}
+\usepackage{wrapfig}
+\usepackage{subfiles}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz-cd}
+\usepackage{multirow}
+\usepackage{pgffor}
+\usepackage{enumitem}
+\usepackage{iflang}
+\usepackage{varioref}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
+
+\newcommand{\nc}{\newcommand}
+\nc{\supindex}{\textsuperscript}
+\renewcommand{\baselinestretch}{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% CONFIG FILE %%%%%%%%%%%%%
+
+\nc{\mytitle}{Implementació d'un sistema criptogràfic per l'enviament del consum en sistemes de comptadors intel·ligents}
+\nc{\mysubtitle}{Bayesian Inference}
+\nc{\authors}{Oriol Alàs Cercós}
+\nc{\datetime}{15\supindex{th} of May, 2020}
+\nc{\assignatura}{Treball Final de Grau}
+\nc{\professorat}{Francesc Sebé Feixas}
+
+% Per separar professors, utilitzar ','
+% 	Ex: Maria, Joan, Pere
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%  LANGUAGE   %%%%%%%%%%%%%
+
+\newcommand{\tr}{\IfLanguageName{english}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% MATH %%%%%%%%%%%%%%%%
+
+\nc{\prob}[1]{P({#1})}
+\nc{\probl}[2]{P({#1}|{#2})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% TREE CREATOR %%%%%%%%%%%%
+
+\setpapersize{A4}
+
+\author{Oriol Alàs Cercós}
+\date{29 d'Abril del 2019}
+
+\def\contentsname{Índex}
+\begin{document}
+	
+	
+	\begin{titlepage}
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=5cm]{imgs/UDL.png}
+				\vspace*{\stretch{1.0}}
+				\\
+				\medskip
+				\begin{center}
+					\medskip\bigskip\bigskip\bigskip
+					
+					\huge\textbf{\mytitle}
+					\\\medskip 	\Large  
+					
+					
+					\bigskip\bigskip\bigskip
+					\bigskip
+					\normalsize{\tr{Made by}{Realitzat per:}}
+					\\
+					\large\textit{\authors}
+					\\
+					\setlength{\parskip}{1em}
+					\normalsize{\tr{Delivery}{Data de lliurament:}}
+					\\
+					\large{\datetime}
+				\end{center}
+				\vspace*{\stretch{2.0}}
+			\end{center}
+		\end{figure}
+		\begin{flushright}
+			Universitat de Lleida
+			\\
+			Escola Politècnica Superior
+			\\
+			Grau en Enginyeria Informàtica
+			\\
+			\assignatura
+			\\
+			\medskip
+			\textbf{\tr{Professorate:}{Tutor:}}
+			\\
+			\foreach \n in \professorat{\n\\}
+		\end{flushright}
+		\thispagestyle{empty} 
+	\end{titlepage}
+	\tableofcontents
+	\thispagestyle{empty} 
+	%\newpage
+	\listoffigures
+	\listoftables
+	\thispagestyle{empty}
+	\newpage
+	\section{Objectius}
+	\begin{itemize}
+		\item Introducció al problema de la privacitat del enviament de consum dels comptadors intel·ligents. Explicar diferents sol·lucions ja realitzades \cite{busom}.
+		\item Estudi del protocol criptogràfic \cite{recsi} per l'enviament de dades del consum en sistemes de comptadors intel·ligents.
+		\item Introducció a la criptografia usada pel protocol.  \cite{diffie-hellman} \cite{elgamal} \cite{kangaroo} \cite{pollard}
+		\item Programació del prototip en Java 8 amb l'ús de la llibreria cig-lib. \cite{smart}
+		\item Pujar la llibreria cig-lib a maven.
+		\item Anàlisis del rendiment del sistema en funció del nombre de comptadors i dels diferents algoritmes que es poden realitzar.
+	\end{itemize}
+	\section{Índex de la memòria}
+	\begin{enumerate}
+		\item \textbf{Introducció}. S'introduirà el problema i s'explicarà el ritme del projecte i què s'explica en cada part.
+		\item \textbf{Criptografia i teoria de la computació}. S'explicarà el problema en que es basa la solució per tal de poder protegir la privacitat i també s'explicaran les diferents propietats o aplicacions criptogràfiques que s'utilitzaran.
+		\begin{enumerate}
+			\item Encriptació  simètrica i asimètrica
+			\item Problema del logaritme discret
+			\begin{enumerate}
+				\item Classificació
+				\item Diffie-Hellman
+				\item ElGamal
+				\item Pollard's Lambda
+			\end{enumerate}
+			\item Encriptació homomòrfica
+		\end{enumerate}
+		\item \textbf{Propostes}. Es començarà amb una petita introducció de les propostes ja fetes classificades en tres tipus. S'endinsarà en les propostes de Busom i Recsi que són les que es basa el projecte.
+		\begin{enumerate}
+			\item Solucions pertorbatives
+			\item Solucions anònimes
+			\item Solucions agregatives
+			\begin{enumerate}
+				\item Proposta Busom
+				\begin{enumerate}
+				
+						\item Establiment de claus.
+						\item Transmissió del consum
+					
+					\item Problema amb la privacitat de les lectures
+				\end{enumerate}
+				\item Proposta Recsi
+				\begin{enumerate}
+					\item Configuració
+					\item Establiment de claus
+					\item Transmissió del consum
+				\end{enumerate}
+			\end{enumerate}
+		\end{enumerate}
+		\item \textbf{Disseny de la implementació}. S'explicarà el disseny de la implementació del projecte, com s'usa la llibreria de criptografia de CiG i es documentarà tot allò que es consideri oportú.
+		\begin{enumerate}
+			\item Connexió
+			\begin{enumerate}
+				\item Data Transfer Objects
+				\item Sender i Receiver
+			\end{enumerate}
+			\item Protocol
+			\begin{enumerate}
+				\item Patró màquina estat
+			\end{enumerate}
+		\end{enumerate}
+		\item \textbf{Anàlisis}. S'analitzaran els costos experimentals del sistema en funció del nombre de comptadors i dels algoritmes emprats per realitzar el logaritme discret. S'analitzarà on està el coll d'ampolla i quines solucions es poden donar.
+		\begin{enumerate}
+			\item Algorismes de computació del logaritme discret
+		\end{enumerate}
+	\end{enumerate}
+	\section{Tasques a realitzar}
+	\begin{itemize}
+		\item Crear una introducció a la criptografia emprada al protocol.
+		\begin{itemize}
+			\item Encriptació simètrica i asimètrica.
+			\item Problema del logaritme discret.
+			\item Diffie-Hellman.
+			\item ElGamal.
+			\item Encriptació homomòrfica.
+		\end{itemize}
+		\item Estudiar les diferents propostes.
+		\begin{itemize}
+			\item Busom.
+			\item Recsi.
+		\end{itemize}
+		\item Estudiar els diferents algoritmes per realitzar el logaritme discret i veure el seu ús de memòria i temps.
+		\begin{itemize}
+			\item Pollard's Lambda o Kangaroo.
+			\item Brute Force logarithm.
+			\item Cached Brute Force logarithm.
+		\end{itemize}
+		\item Realitzar un disseny del prototip.
+		\item Implementar el protocol usant Java 8 i amb l'ajuda de la llibreria cig-lib.
+		\begin{itemize}
+			\item Aprenentatge d'ús de la llibreria cig-lib \cite{ciglib}.
+			\item Realitzar la documentació  i memòria de la implementació explicant el disseny i les decisions preses.
+		\end{itemize}
+	\end{itemize}
+	\section{Planificació temporal}
+	\begin{itemize}
+		\item \textbf{Setmana 21 Març.}
+		\begin{itemize}
+			\item Acabar introducció a la criptografia.
+			\item Explicar Pollard's Lambda.
+			\item Explicar Diffie-Hellman.
+		\end{itemize}
+		\item \textbf{Setmana 28 Març.} 
+		\begin{itemize}
+			\item Acabar d'explicar la proposta de Busom i acabar de fer el diagrama de comunicació. 
+			\item Acabar d'explicar la proposta de Recsi, fer els diferents diagrames de seqüència.
+		\end{itemize}
+		\item \textbf{Setmana 4 Abril}. Realitzar els diagrames de classes del disseny de la implementació.
+		\item \textbf{Setmana 11 Abril}. Realitzar el diagrama de seqüència entre comptador i subestació en tots els protocols.
+		\item \textbf{Setmana 18 Abril}. Explicar el disseny de la proposta en la documentació.
+		\begin{itemize}
+			\item Datagrames DTO de recsi i busom.
+			\item Classes amb responsabilitats en la connexió.
+		\end{itemize}
+		\item \textbf{Setmana 25 Abril}.Explicar el disseny de la proposta en la documentació.
+		\begin{itemize}
+			\item Patró de disseny State.
+		\end{itemize}
+		\item \textbf{Setmana 2 Maig}. Anàlisis del sistema en costos teòrics.
+		\item \textbf{Setmana 9 Maig}. Anàlissi del sistema en costos experimentals.
+		\begin{itemize}
+			\item En funció del nombre de comptadors.
+			\item En funció dels algoritmes per realitzar el logaritme discret.
+		\end{itemize}
+		\item \textbf{Setmana 16 Maig}. Revisar documentació i memòria.
+		\item \textbf{Setmana 23 Maig}. Realitzar conclusió del projecte.
+		\item \textbf{Setmana 30 Maig}. Revisar memòria i presentació.\textit{}
+	\end{itemize}
+	\nocite{*}
+	\bibliography{document}
+	\bibliographystyle{unsrt}
+	
+\end{document}
