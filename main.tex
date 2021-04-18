@@ -146,7 +146,7 @@ es poden fer millors prediccions i tendències de consum de manera que la produc
 \\
 Tot i que és beneficiosa a gran escala, la quantitat d'informació que proporciona una sola llar es pot utilitzar per fer prediccions de la vida quotidiana, com per exemple: quan arriben a casa, miren la televisió o se'n van al llit. Per tant, és important mantenir les dades de lectura privades i protegides de qualsevol atac. Arran d'això, s'han realitzat diverses propostes, una d'elles ha estat ideada pel grup de recerca Criptografia i Grafs de la Universitat de Lleida \cite{recsi}.
 \\\\
-L'objectiu principal d'aquesta memòria és recollir el desenvolupament de la simulació d'aquesta proposta per tal de resoldre el problema anteriorment explicat. No obstant això, es necessita un assoliment dels conceptes que envolten el tema per poder entendre l'actual solució i la seva implementació. Així doncs, els objectius del treball seran:
+L'objectiu principal d'aquesta memòria ha estat recollir el desenvolupament de la simulació d'aquesta proposta per tal de resoldre el problema anteriorment explicat. No obstant això, es necessita un assoliment dels conceptes que envolten el tema per poder entendre l'actual solució i la seva implementació. Així doncs, els objectius del treball seran:
 \begin{itemize}
 	\item Estudiar la solució proposada.
 	\item Posar en context l'encriptació homomòrfica.
@@ -155,12 +155,11 @@ L'objectiu principal d'aquesta memòria és recollir el desenvolupament de la si
 	\item Implementar un servidor que simuli una subestació d'un barri de comptadors.
 	\item Realitzar un estudi dels costs.
 \end{itemize}
-Abans de submergir-se en detalls de la solució proposada, en la \Cref{part:criptografia} s'endinsarà en el món de la criptografia i s'explicarà l'encriptació asimètrica i homomòrfica. A més a més, es detallarà el sistema en què es basa la nostra proposta, ElGamal. En la \Cref{part:propostes},  s'introduirà una visió general i es plantejaran les diferents propostes per tal de solucionar la privacitat dels usuaris. A més a més, s'explicarà de manera formal el protocol i s'establiran els requeriments. Un cop havent detallat la proposta, es passarà a l'explicació de la implementació i el disseny del programa en la \Cref{part:disseny}. Finalment, en la \Cref{part:analisis} es realitzarà l'anàlisis del programa gràcies a resultats experimentals.
+Abans de submergir-se en detalls de la solució proposada, la \Cref{part:criptografia} s'endinsa en el món de la criptografia i en aquesta s'explica l'encriptació asimètrica i homomòrfica. A més a més, es detalla el sistema en què es basa la nostra proposta, ElGamal. En la \Cref{part:propostes},  s'introdueix una visió general i es plantegen les diferents propostes per tal de solucionar la privacitat dels usuaris. A més a més, s'explica de manera formal el protocol i s'establiran els requeriments. Un cop havent detallat la proposta, es passa a l'explicació de la implementació i el disseny del programa en la \Cref{part:disseny}. Finalment, en la \Cref{part:analisis}  s'analitzarà els costs del programa en funció del nombre de comptadors.
 \newpage\part{Criptografia i teoria de la computació}\label{part:criptografia}
 \section{Encriptació simètrica i asimètrica}
-Un criptosistema és un algorisme que transforma un
-missatge intel·ligible a un altre inintel·ligible i
-viceversa, per tal de crear una comunicació segura davant de possibles interceptors de la informació maliciosos.
+Un criptosistema està format per dos tipus d'algorismes, un que transforma el
+missatge intel·ligible a un altre inintel·ligible i l'altre, de manera inversa. D'aquesta manera, és possible crear una comunicació segura davant de possibles interceptors de la informació maliciosos.
 \\
 Un criptosistema està constituït per tres conjunts finits i dos famílies de funcions:
 \begin{itemize}
@@ -177,13 +176,14 @@ Aquestes funcions satisfan:
 \end{array} \Bigg\}, \ D_{k_2}(E_{k_1}(m)) = m \Longleftrightarrow D_{k_2} \circ E_{k_1} =  Id\]
 Segons la funció d'encriptació i desencriptació, els criptosistemes es poden classificar en dos tipus:
 \begin{itemize}
-	\item En un criptosistema simètric o convencional, la clau és la mateixa per encriptar com per desencriptar, és a dir, $k_1 = k_2$. Com que l'emisor i el receptor han de compartir la clau, el canal on s'ha de transmetre ha de ser segur perquè no hi hagi interceptors. La seguretat d'aquests sistemes es basen en el gran cost computacional que es requereix per realitzar l'atac de força bruta. A diferència de l'encriptació asimètrica, no es poden realitzar signatures digitals, ja que no hi ha distinció de claus entre usuaris.
+	\item En un criptosistema simètric o convencional, la clau és la mateixa per encriptar com per desencriptar, és a dir, $k_1 = k_2$. Com que l'emisor i el receptor han de compartir la clau, el canal on s'ha de transmetre ha de ser segur perquè no hi hagi interceptors. La seguretat d'aquests sistemes es basen en el gran cost computacional que es requereix per realitzar l'atac de força bruta. Aquest tipus de sistemes es basen en a fer transformacions al missatge a nivell de bit. A diferència de l'encriptació asimètrica, no es poden realitzar signatures digitals, ja que no hi ha distinció de claus entre usuaris.
 	\item L'encriptació asimètrica ens proporciona, que tothom o un gran conjunt d'usuaris puguin encriptar el seu missatge, però només un cert conjunt més petit, fins i tot podent ser només un individu, pugui desencriptar el xifrat. Per tal de realitzar això, per encriptar i desencriptar s'utilitzaran dos tipus diferents de claus:
 	\begin{itemize}
 		\item La \textbf{clau pública} s'usarà per xifrar el missatge i la podrà utilitzar qui vulgui.
 		\item La \textbf{clau privada} s'usara per desxifrar el missatge i només la podrà utilitzar un cert grup d'entitats.
 	\end{itemize}
-	Aquest tipus de criptosistemes es basen en encriptar mitjançant una funció $c = f(m)$ que sigui fàcil d'evaluar però sigui computacionalment difícil realitzar $f^{-1}(c)$ sense saber una informació addicional que ens permeti trobar el missatge. Aquests tipus de vulnerabilitats es diuen \textit{trap-door function}.
+	Aquest tipus de criptosistemes es basen en encriptar mitjançant una funció $c = f(m)$ que sigui fàcil d'evaluar però sigui computacionalment difícil realitzar $f^{-1}(c)$ sense saber una informació addicional que ens permeti trobar el missatge. Aquests tipus de funcions es diuen \textit{trap-door function}.
+	Els criptosistemes de clau pública, a diferència dels simètrics, no treballen en nivell de bit, sinó que representen el missatge com un número i realitzen operacions matemàtiques amb ell. 
 \end{itemize}
 
 \section{Problema del logaritme discret}
@@ -193,10 +193,38 @@ El problema del logaritme discret és un problema crític en la teoria de nombre
 \\
 Sigui $G$ un grup cíclic finit amb l'operació de multiplicació i l'element d'identitat 1 i $g$ un generador de $G$, llavors cada element $a \in G$ es pot escriure de la forma:
 \[a = g^k, \quad k \in \mathbb{Z^+} \] 
-Sabent el valor de $a$ i $g$ és computacionalment costós trobar $k$, ja que s'ha de realitzar una búsqueda de totes les possibles solucions fins trobar:
+Sabent el valor de $a$ i $g$ és computacionalment costós\footnote{És computacionalment costós només en determinats grups, com per exemple: grups cíclics com $Z_p$ o subgrups cíclics de corbes el·líptiques sobre cossos finits. %TODO: explicar quan
+} trobar $k$, ja que s'ha de realitzar una búsqueda de totes les possibles solucions fins trobar:
 \[k = log_g(a)\]
 \subsection{Classificació}
-Tot i que el problema de la descomposició en factors primers i el del logaritme discret són problemes diferents, en cap dels dos es coneix un algorisme eficient si no és realitzat per un ordinador quàntic. Els dos problemes estan catalogats actualment com problemes \textit{NP}  però no estan considerats \textit{NP-Complets} perquè no s'ha trobat una forma de reduir aquests problemes a un problema NP-Complet en temps polinomial.
+
+%Tot i que el problema de la descomposició en factors primers i el del logaritme discret són problemes diferents, en cap dels dos es coneix un algorisme eficient si no és realitzat per un ordinador quàntic. Els dos problemes estan catalogats actualment com problemes \textit{NP}  però no estan considerats \textit{NP-Complets} perquè no s'ha trobat una forma de reduir aquests problemes a un problema NP-Complet en temps polinomial.
+Encara no s'ha trobat cap algorisme eficient que resolgui el problema del logaritme discret en temps polinomial, per això, actualment pertany al conjunt de problemes \textit{NP}. No obstant això, no està considerat \textit{NP-Complet} ja que no s'ha trobat una forma de reduir aquest problema a un que ja sigui \textit{NP-Complet} en temps polinomial.
+\subsection{Pollard's Lambda}
+J. M. Pollard \cite{pollard} va descriure dos algoritmes per resoldre el logaritme discret: el mètode \textit{Rho} i el mètode \textit{Lambda} o també anomenat \textit{Kangaroo} \cite{kangaroo}. El mètode \textit{Lambda } relaxa una mica el problema, ja que, donat el grup cíclic $G$, es pretén resoldre el logaritme donat un interval entre uns llindars:
+\[g^k = a, \quad L \le k \le U\]
+Per tal de resoldre-ho, es creen dos seqüències que, al trobar-se en un punt vol dir que s'ha trobat la potència que s'està buscant. La metàfora rau en dos cangurs (les seqüències), un mans i l'altre salvatge, es situen en un punt que sabem i en un que no respectivament. Quan vagin saltant i es trobin, sabent el comportament del salvatge podrem veure a quin punt estava situat al principi.
+\begin{enumerate}
+	\item S'escolleix una funció $f$ pseudoaleatòria que mapejarà els elements del grup a un conjunt petit d'enters positius $S$ denominats els salts:
+	\[f : G \rightarrow S, \qquad S = \{s_1, \dots, s_n\}\]
+	\item Tenint $b = U - 1$, es computa la primera seqüència tal que:
+	\[x_0 = g^b, \qquad x_{i+1} = x_i \cdot g^{f(x_i)}, \quad \ i \in \{1, 2, \dots\}\]
+	En aquesta seqüència, sabem a quin valor estem realitzant la potència sobre $g$, és a dir, seria el cangur mans.
+	\item Es computa el sumatori dels elements en els salts aleatoris i s'observa que:
+	\[d = \sum_{i=0}^{N - 1} f(x_i)\]
+	\[x_N = x_0 \cdot g^d = g^{b + d}\]
+	\item La segona seqüència, que correspondrà al cangur salvatge, vindrà donada per:
+	\[y_0 = a, \qquad y_{i+1} = y_i \cdot g^{f(y_i)}, \qquad i \in \{1, 2, \dots\}\]
+	i estarà acompanyada per la seqüència d'enters $\{d_0, d_1, \dots \}$:
+	\[d_n = \sum_{i=0}^{n}f(y_i)\]
+	La $d_i$ es pot entendre com la distància en que el viatja el nostre algoritme del cangur salvatge en $i$ passos. A més a més, es pot observar que $y_i = y_0 \cdot g^{d_i} = a \cdot g^{d_i} = g^{k} \cdot g^{d_i}$.
+	\item La computació pararà en el moment que:
+	\begin{enumerate}[label=(\Alph*)]
+		\item Quan $y_j = x_N$ per alguna $j$, podem observar que:
+		\[x_N = y_j \Longrightarrow g^{b + d} = g^{k + d_j} \Longrightarrow g^k = g^{b + d - d_j} \Longrightarrow k = b + d - d_j\]
+		\item Quan $d_i > b - a + d $, és a dir, s'ha sobrepassat la distància a realitzar $d_i > g^b - g^k + d$, l'algoritme ha fallat en trobar $k$, de manera que s'ha de tornar a començar canviant el conjunt $S$ i/o la funció $f$.
+	\end{enumerate}
+\end{enumerate}
 \subsection{Intercanvi de claus Diffie-Hellman}
 Diffie-Hellman \cite{diffie-hellman} és un mètode d'intercanvi de claus criptogràfiques de manera segura usant un canal obert que es basa en el problema del logaritme discret. Tradicionalment, la comunicació xifrada requeria l'intercanvi de claus per un medi físic segur. En comptes d'això,  Whitfield Diffie and Martin Hellman van dissenyar un sistema que permetia que les dues parts no tinguessin coneixements previs un de l'altre a l'hora d'establir una clau secreta entre les dues entitats.
 \\
@@ -240,31 +268,6 @@ Sabent que $c_1 = g^r$ i $c_2 = m \cdot h^r$ i que $c_2$ és qui té el missatge
 \end{equation*}
 És a dir, per trobar el missatge $m$ es realitzarà:
 \[ m = \ c_2 (c_1^d)^{-1} \]
-\subsection{Pollard's Lambda}
-J. M. Pollard \cite{pollard} va descriure dos algoritmes per resoldre el logaritme discret: el mètode \textit{Rho} i el mètode \textit{Lambda} o també anomenat \textit{Kangaroo} \cite{kangaroo}. El mètode \textit{Lambda } relaxa una mica el problema, ja que, donat el grup cíclic $G$, es pretén resoldre el logaritme donat un interval entre uns llindars:
-\[g^k = a, \quad L \le k \le U\]
-Per tal de resoldre-ho, es creen dos seqüències que, al trobar-se en un punt vol dir que s'ha trobat la potència que s'està buscant. La metàfora rau en dos cangurs (les seqüències), un mans i l'altre salvatge, es situen en un punt que sabem i en un que no respectivament. Quan vagin saltant i es trobin, sabent el comportament del salvatge podrem veure a quin punt estava situat al principi.
-\begin{enumerate}
-	\item S'escolleix una funció $f$ pseudoaleatòria que mapejarà els elements del grup a un conjunt petit d'enters positius $S$ denominats els salts:
-	\[f : G \rightarrow S, \qquad S = \{s_1, \dots, s_n\}\]
-	\item Tenint $b = U - 1$, es computa la primera seqüència tal que:
-	\[x_0 = g^b, \qquad x_{i+1} = x_i \cdot g^{f(x_i)}, \quad \ i \in \{1, 2, \dots\}\]
-	En aquesta seqüència, sabem a quin valor estem realitzant la potència sobre $g$, és a dir, seria el cangur mans.
-	\item Es computa el sumatori dels elements en els salts aleatoris i s'observa que:
-	\[d = \sum_{i=0}^{N - 1} f(x_i)\]
-	\[x_N = x_0 \cdot g^d = g^{b + d}\]
-	\item La segona seqüència, que correspondrà al cangur salvatge, vindrà donada per:
-	\[y_0 = a, \qquad y_{i+1} = y_i \cdot g^{f(y_i)}, \qquad i \in \{1, 2, \dots\}\]
-	i estarà acompanyada per la seqüència d'enters $\{d_0, d_1, \dots \}$:
-	\[d_n = \sum_{i=0}^{n}f(y_i)\]
-	La $d_i$ es pot entendre com la distància en que el viatja el nostre algoritme del cangur salvatge en $i$ passos. A més a més, es pot observar que $y_i = y_0 \cdot g^{d_i} = a \cdot g^{d_i} = g^{k} \cdot g^{d_i}$.
-	\item La computació pararà en el moment que:
-	\begin{enumerate}[label=(\Alph*)]
-		\item Quan $y_j = x_N$ per alguna $j$, podem observar que:
-		\[x_N = y_j \Longrightarrow g^{b + d} = g^{k + d_j} \Longrightarrow g^k = g^{b + d - d_j} \Longrightarrow k = b + d - d_j\]
-		\item Quan $d_i > b - a + d $, és a dir, s'ha sobrepassat la distància a realitzar $d_i > g^b - g^k + d$, l'algoritme ha fallat en trobar $k$, de manera que s'ha de tornar a començar canviant el conjunt $S$ i/o la funció $f$.
-	\end{enumerate}
-\end{enumerate}
 \section{Encriptació homomòrfica}\label{subsec:homomorfism}
 L'encriptació homomòrfica ens permetrà poder operar amb els missatges sense haver de desxifrar-los ni sense perdre el seu valor.
 Per definició, una funció és homomòrfica, si donada la funció $f: G \rightarrow H$:
@@ -281,6 +284,11 @@ Es pot comprovar que la funció d'encriptació d'ElGamal es homomòrfica d'aques
 	=& \ E_y(m_1 \cdot m_2)
 \end{aligned}
 \end{equation*}
+ElGamal és només homomòrfic usant l'operació de multiplicació. Per tal d'utilitzar la propietat homomòrfica usant la suma, en lloc de voler passar $m$, es passarà $g^m$ tal que:
+\[E_(g^{m_1})  \cdot E_(g^{m_2}) = E(g^{m_1} \cdot g^{m_2}) = E(g^{m_1 + m_2})\] 
+La dificultat que es paga al encriptar $g^{m_1}$ i $g^{m_2}$ és que, a l'hora de voler rebre el missatge, s'haurà de realitzar el logaritme discret per trobar $m_1 + m _2$.
+\\
+\\
 En un sistema agregatiu, es voldrà que la subestació pugui desxifrar dades en conjunt però, en cas que es vulgui saber només les dades d'un individu mitjançant el seu missatge xifrat i vulnerar la seva privacitat, aquesta no ho pugui fer. Per aconseguir-ho, un cas és afegir un cert soroll al missatge a l'hora de xifrar-lo, que després gràcies a la resta participants es pugui contrarestar. Per posar un exemple, donem el cas on dos individus (\textit{A} i \textit{B}) es volen comunicar de manera agregativa, a un tercer (\textit{C}) però sense donar el seu propi missatge i suposem que els tres tenen a disposició d'un sistema criptogràfic usant encriptació homomòrfica. Si \textit{A} i \textit{B} es posen d'acord i creen una clau pel tercer de manera que:
 \begin{enumerate}
 	\item Configuració:
