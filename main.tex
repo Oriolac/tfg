@@ -40,6 +40,7 @@
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{tikz}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
@@ -138,8 +139,10 @@ Grau en Enginyeria Informàtica
 \part{Introducció}
 Els comptadors intel·ligents són dispositius domèstics que recullen i envien 
 el consum de l'electricitat a un proveïdor d’energia en intervals de temps reduïts. El consumidor pot saber el seu consum elèctric en tot moment i la seva despesa de manera més precisa amb possibles preus i tarifes personalitzades depenent del consum horari, al permetre la telelectura.
-\\
-\\
+\begin{figure}[H]
+	\includegraphics[width=15cm]{umls/network.png}
+	\caption{Diagrama de xarxa simple d'un sistema de comptadors.}
+\end{figure}
 A causa d'aquest constant enviament d'informació,
 es poden fer millors prediccions i tendències de consum de manera que la producció pugui estar més a prop de l'energia que es necessita, és a dir, la producció d'energia es pot ajustar més al real consum d'aquesta. A més a més, el distribuïdor d'energia no té la necessitat de revisar manualment el consum i la lectura del comptador elèctric en cada llar.
 \\
@@ -310,13 +313,19 @@ En l'actualitat s'ha proposat tres tipus de mecanismes per tal de preservar la p
 \end{itemize}
 \section{Proposta Busom}
 La protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la subestació només sabrà el valor en conjunt d'un barri de comptadors agregats, és a dir, el sumatori de cadascuna de les seves lectures. En aquesta proposta, es vol utilitzar una clau pública per tal d'encriptar les dades i, gràcies a la propietat homomòrfica d'ElGamal, només poder rebre el resultat en conjunt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{umls/busom.png}
+	\caption{Diagrama de seqüència del protocol Busom}
+\end{figure}
+
 \subsection{Procediment}
 \subsubsection{Establiment de clau pública Diffie-Hellman}
 Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. Busom \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{Creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
 \subsubsection{Transmissió del consum}
-No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades.
+No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades. Per tal d'entendre bé aquest procés, relaxarem el problema de manera que només es fa una iteració. El nombre que representa la iteració $j$, en aquest cas serà $j = 1$.
 \begin{enumerate}
-	\item La subestació sol·licitarà als comptadors les lectures de l'electricitat manera periòdica.
+	\item La subestació sol·licitarà als comptadors les lectures de l'electricitat. En el cas real, la subestació ho demanaria de manera periòdica i cada vegada $j$ incrementaria.
 	\item Cada comptador generarà un soroll aleatori $z_i \in \mathbb{Z_q^*}$ i enviarà a la subestació la següent computació:
 	\[C_i = E_y(g^{(m_i + z_i)}) = (c_i, d_i) = (g^r_i, m_i y^r_i)\]
 	\item La subestació agrega tots els xifrats de manera que:
@@ -333,6 +342,11 @@ No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'h
 \end{enumerate}
 % cost lineal O(n)
 \subsection{Problema amb la privacitat de les lectures}
+En \cite{repair-busom} s'explica com una subestació corrupta, sense necessitat de la col·laboració de cap comptador intel·ligent corrupte, pot obtenir la lectura exacta del consum d'un comptador intel·ligent dirigit a una ronda determinada del protocol.
+\\
+\\
+La subestació, per tal d'aconseguir aquesta
+%  Com veurem, la subestació es desvia del protocol en una ronda determinada en què no obté cap informació sobre les lectures enviades per els metres durant aquesta ronda. No obstant això, la informació continguda en aquestes dades xifrades es pot obtenir combinant-les amb dades encriptades recollides en properes rondes. La seguretat defecte i la forma en què una subestació malmesa pot obtenir avantatges d’això es descriu ara. L’esmentat defecte de seguretat permetria, en realitat desplegament, una subestació danyada per aconseguir a tots els individus lectures de qualsevol comptador del seu barri. Al millor dels nostres coneixement, aquest defecte de seguretat no s’havia informat abans. Al pas 2 del protocol (vegeu la figura 1), en lloc d'enviar c als metres, la subestació genera i envia un valor cˆ calculat com cˆ = gv per a un conegut i triat aleatòriament enter v. Cada metre, en rebre cˆ, realitzarà el pas 3 com de costum, tornant Tˆ Com a resultat:
 \section{L'actual proposta}
 El protocol \cite{recsi} es basa en un sistema agregatiu, ja que la subestació només tindrà a la seva disposició el sumatori de lectures dels comptadors que pertanyin al seu conjunt. Per tal d'aconseguir només la lectura total del barri tenint les dades de cada llar protegides, es fa ús d'encriptació homomòrfica, usant ElGamal.
 En aquesta solució, també es proposa realitzar una configuració senzilla que no impliqui una gran complexitat algorítmica, com en \cite{busom}, per tal que la subestació tingui la clau per poder trobar el consum total dels comptadors. Un cop feta la configuració de les claus, ja només queda l'enviament de les lectures xifrades a la subestació.
@@ -342,6 +356,11 @@ Així doncs, es pot diferenciar dos estats ben diferenciats d'aquest protocol:
 \item Estat d'establiment de les claus (KS\footnote{Key Stablishment}) privades dels comptadors i de la subestació. En aquesta fase, la subestació haurà de trobar la clau per poder computar després la lectura total dels comptadors en la següent fase.
 \item Estat de transmissió del consum (CT\footnote{Consumption Transmission}). Cada comptador intel·ligent enviarà el consum de la llar a la subestació. Un cop s'envien totes les lectures xifrades, mitjançant la clau de la subestació es podrà trobar el missatge xifrat sense dependre de les claus privades dels comptadors. 
 \end{enumerate}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{umls/recsi.png}
+	\caption{Diagrama de seqüència del protocol RECSI}
+\end{figure}
 \subsection{Configuració}
 Abans d'engegar el sistema, es necessita que tant els comptadors com la subestació utilitzin el mateix cos i element generador per tal de xifrar i desxifrar correctament els missatges. Per tant, s'haurà d'elegir:
 \begin{itemize}

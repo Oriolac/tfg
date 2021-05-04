@@ -1,0 +1,20 @@
+@startuml network
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+
+
+node Substation
+node s1 as "Smart Meter M<sub>1</sub>"
+node s2 as "Smart Meter M<sub>2</sub>"
+label si1 as "..."
+node si as "Smart Meter M<sub>i</sub>"
+label si2 as "..."
+node sn as "Smart Meter M<sub>n</sub>"
+Substation -(0- s1
+Substation -(0- s2
+Substation -(0- si1
+Substation -(0- si
+Substation -(0- si2
+Substation -(0- sn
+
+@enduml

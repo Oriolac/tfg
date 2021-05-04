@@ -1,0 +1,36 @@
+@startuml recsi
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+hnote across: Key Stablishment
+loop for each chunk s<sub>i j</sub> of s<sub>i</sub>
+    "Smart Meter M<sub>i</sub>" -> "Substation": sendSecretKey(//s<sub>i j</sub>// )
+    note left
+        Secret key : <latex>s_{i}</latex>
+    end note 
+    Substation -> Substation : computeChunk(s<sub>1 j</sub>, s<sub>2 j</sub>, ..., s<sub>n j</sub>)
+    note right
+    <latex>chunk_j = \sum_{i=1}^{n} s_{i j}</latex>
+    end note
+end
+Substation -> Substation : computeSubstationKey()
+note right
+    <latex>s_0' = \sum_{j = 1}^{l} (2^{13 \cdot (j - 1)} \cdot chunk_j) </latex>
+    <latex>s_0' = \sum_{1 = 1}^{n}</latex>
+    Substation Key: <latex>s_0 = - s_0' (mod \; p)</latex>
+end note
+
+hnote across: Consumption transmission
+loop for each message m<sub>i</sub> in M<sub>i</sub> at time t
+    "Smart Meter M<sub>i</sub>" -> "Substation" : //C<sub>i</sub>//
+    note left
+        Reading: <latex>m_{i}</latex>
+        <latex>C_i = m_i \cdot P + s_i \cdot H(t) </latex>
+    end note
+    Substation -> Substation : compute(C<sub>1</sub>, C<sub>2</sub>, ..., C<sub>n</sub>)
+    note right
+        <latex>C = \sum_{i = 1}^{n} C_i = m \cdot P + \sum_{i = 1}^{n} s_i \cdot H(t) </latex>
+        <latex>D = C + s_o \cdot H(t) = m \cdot P +s \cdot H(t) =  m \cdot P</latex>
+        <latex>m = \sum_{i=1}^{n} m_i = log_P(D)</latex>
+    end note
+end
+@enduml
