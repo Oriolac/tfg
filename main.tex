@@ -41,6 +41,8 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{tikz}
+\usepackage{enumitem}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
@@ -182,8 +184,8 @@ Segons la funció d'encriptació i desencriptació, els criptosistemes es poden 
 	\item En un criptosistema simètric o convencional, la clau és la mateixa per encriptar com per desencriptar, és a dir, $k_1 = k_2$. Com que l'emisor i el receptor han de compartir la clau, el canal on s'ha de transmetre ha de ser segur perquè no hi hagi interceptors. La seguretat d'aquests sistemes es basen en el gran cost computacional que es requereix per realitzar l'atac de força bruta. Aquest tipus de sistemes es basen en a fer transformacions al missatge a nivell de bit. A diferència de l'encriptació asimètrica, no es poden realitzar signatures digitals, ja que no hi ha distinció de claus entre usuaris.
 	\item L'encriptació asimètrica ens proporciona, que tothom o un gran conjunt d'usuaris puguin encriptar el seu missatge, però només un cert conjunt més petit, fins i tot podent ser només un individu, pugui desencriptar el xifrat. Per tal de realitzar això, per encriptar i desencriptar s'utilitzaran dos tipus diferents de claus:
 	\begin{itemize}
-		\item La \textbf{clau pública} s'usarà per xifrar el missatge i la podrà utilitzar qui vulgui.
-		\item La \textbf{clau privada} s'usara per desxifrar el missatge i només la podrà utilitzar un cert grup d'entitats.
+		\item La \textit{clau pública} s'usarà per xifrar el missatge i la podrà utilitzar qui vulgui.
+		\item La \textit{clau privada} s'usara per desxifrar el missatge i només la podrà utilitzar un cert grup d'entitats.
 	\end{itemize}
 	Aquest tipus de criptosistemes es basen en encriptar mitjançant una funció $c = f(m)$ que sigui fàcil d'evaluar però sigui computacionalment difícil realitzar $f^{-1}(c)$ sense saber una informació addicional que ens permeti trobar el missatge. Aquests tipus de funcions es diuen \textit{trap-door function}.
 	Els criptosistemes de clau pública, a diferència dels simètrics, no treballen en nivell de bit, sinó que representen el missatge com un número i realitzen operacions matemàtiques amb ell. 
@@ -312,41 +314,7 @@ En l'actualitat s'ha proposat tres tipus de mecanismes per tal de preservar la p
 	\item \textbf{Agregatiu}. Els comptadors s'agrupen en grups per tal d'unir les seves lectures abans de transmetre-les a la subestació. Les dades solen ser agregades gràcies a un \textit{dealer} o distribuïdor, o fent ús d'homomorfisme. El sistema pot prevenir que una possible vulnerabilitat al distribuïdor de claus pugui alterar la seguretat del protocol i violar la privacitat en les lectures utilitzant un sistema de configuració basat en l'homomorfisme. No obstant això, implicarà l'ús de tècniques computacionals segures per tal de prevenir atacs de privacitat.
 \end{itemize}
 \section{Proposta Busom}
-La protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la subestació només sabrà el valor en conjunt d'un barri de comptadors agregats, és a dir, el sumatori de cadascuna de les seves lectures. En aquesta proposta, es vol utilitzar una clau pública per tal d'encriptar les dades i, gràcies a la propietat homomòrfica d'ElGamal, només poder rebre el resultat en conjunt.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=14cm]{umls/busom.png}
-	\caption{Diagrama de seqüència del protocol Busom}
-\end{figure}
-
-\subsection{Procediment}
-\subsubsection{Establiment de clau pública Diffie-Hellman}
-Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. Busom \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{Creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
-\subsubsection{Transmissió del consum}
-No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades. Per tal d'entendre bé aquest procés, relaxarem el problema de manera que només es fa una iteració. El nombre que representa la iteració $j$, en aquest cas serà $j = 1$.
-\begin{enumerate}
-	\item La subestació sol·licitarà als comptadors les lectures de l'electricitat. En el cas real, la subestació ho demanaria de manera periòdica i cada vegada $j$ incrementaria.
-	\item Cada comptador generarà un soroll aleatori $z_i \in \mathbb{Z_q^*}$ i enviarà a la subestació la següent computació:
-	\[C_i = E_y(g^{(m_i + z_i)}) = (c_i, d_i) = (g^r_i, m_i y^r_i)\]
-	\item La subestació agrega tots els xifrats de manera que:
-	\[C = (\prod_{i=1}^{n} c_i, \ \prod_{i=1}^{n} d_i) = (g^r, \ y^r \cdot \prod_{i=1}^{n} m_i)\]
-	i envia $C$ a tots els comptadors del seu barri.
-	\item Cada comptador, al rebre $C$, computa:
-	\[T_i = c^{x_i} g^{z_i}\]
-	i envia el seu resultat a la subestació. Després d'això, el comptador ja no necessitarà $z_i$ i podrà esborrar-lo de la memòria.
-	\item Un cop la subestació ha rebut tots els $T_i$ de cada comptador, calcula:
-	\[D = d \cdot (\prod_{i=1}^{n} T_i)^{-1}, \qquad \prod_{i=1}^{n} T_i = (g^{r})^x \cdot g^z = y^r \cdot g^z\]
-	\item D'aquesta manera, la subestació només haurà de calcular:
-	\[m = log_g D = \sum_{i=1}^{n} m_i\]
-	Al necessitar realitzar el logaritme discret, es requereix que les lectures siguin petites per tal de no elevar el cost computacional.
-\end{enumerate}
-% cost lineal O(n)
-\subsection{Problema amb la privacitat de les lectures}
-En \cite{repair-busom} s'explica com una subestació corrupta, sense necessitat de la col·laboració de cap comptador intel·ligent corrupte, pot obtenir la lectura exacta del consum d'un comptador intel·ligent dirigit a una ronda determinada del protocol.
-\\
-\\
-La subestació, per tal d'aconseguir aquesta
-%  Com veurem, la subestació es desvia del protocol en una ronda determinada en què no obté cap informació sobre les lectures enviades per els metres durant aquesta ronda. No obstant això, la informació continguda en aquestes dades xifrades es pot obtenir combinant-les amb dades encriptades recollides en properes rondes. La seguretat defecte i la forma en què una subestació malmesa pot obtenir avantatges d’això es descriu ara. L’esmentat defecte de seguretat permetria, en realitat desplegament, una subestació danyada per aconseguir a tots els individus lectures de qualsevol comptador del seu barri. Al millor dels nostres coneixement, aquest defecte de seguretat no s’havia informat abans. Al pas 2 del protocol (vegeu la figura 1), en lloc d'enviar c als metres, la subestació genera i envia un valor cˆ calculat com cˆ = gv per a un conegut i triat aleatòriament enter v. Cada metre, en rebre cˆ, realitzarà el pas 3 com de costum, tornant Tˆ Com a resultat:
+\subfile{sec/propostes/busom.tex}
 \section{L'actual proposta}
 El protocol \cite{recsi} es basa en un sistema agregatiu, ja que la subestació només tindrà a la seva disposició el sumatori de lectures dels comptadors que pertanyin al seu conjunt. Per tal d'aconseguir només la lectura total del barri tenint les dades de cada llar protegides, es fa ús d'encriptació homomòrfica, usant ElGamal.
 En aquesta solució, també es proposa realitzar una configuració senzilla que no impliqui una gran complexitat algorítmica, com en \cite{busom}, per tal que la subestació tingui la clau per poder trobar el consum total dels comptadors. Un cop feta la configuració de les claus, ja només queda l'enviament de les lectures xifrades a la subestació.
