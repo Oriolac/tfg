@@ -94,14 +94,14 @@ Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{
 	\item En la \textit{configuració del sistema}, s'afegirà del original:
 	\begin{itemize}
 		\item La constant $l \ge 16 $ que satisfà \[l \cdot n \le \lfloor log_2 \; p \rfloor - 64\]
-		\item \textit{Precomputació de taula de primers}. Cada comptador $M_i$ guarda una taula amb tots els enters primers, de llargada en bits com a màxim $l$, que pertanyen a $\mathbb{Z_q^*}$ i estan generats per g.
+		\item \textit{Precomputació de taula de primers}. Cada comptador $M_i$ guarda una taula amb tots els enters primers $p_i$, de llargada en bits com a màxim $l$, $\lceil log_2 \, p_i \rceil \le l$, que pertanyen a $\mathbb{Z_q^*}$ i estan generats per g.
 		\item \textit{Vector de precomputació}. La subestació computa i guarda un vector $a = (a_0, \dots, a_{m_{\textrm{max}}})$ tal que \[a_i = (g^i)^{-1}, \quad i \in \{0, \cdots, m_{\textrm{max}}\}\] sent $m_{\textrm{max}}$ una fita superior de la suma de totes les lectures del comptadors del sistema agregat.
 	\end{itemize}
 	\item L'\textit{establiment de claus} no varia de la versió original \cite{busom}, ja que no hi ha incidències de seguretat en aquesta fase del sistema.
 	\item Per tal d'explicar els canvis en la \textit{transmissió del consum}, s'ha preferit explicar tot el procès de comunicació.
 	\begin{enumerate}
 		\item La subestació demana a tots els comptadors intel·ligents que pertanyen al seu barri les seves lectures mitjançant un missatge de sol·licitud.
-		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna. Llavors, el missatge xifrat està compost per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
+		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna en la taula de precomputació++. Llavors, el missatge xifrat està compost per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
 		\[E_y(p_i \cdot g^{m_i + z_i}) = (c_i, d_i) = (g^r, p_i \cdot g^{m_i + z_i} \cdot y^{r_i})\]
 		\item La subestació agregarà tots els missatges xifrats rebuts
 		\[(c, d) = \Big( \prod c_i, \; \prod d_i \Big) = (g^r,\; P \cdot g^{m + z} \cdot y^r)\]
@@ -109,7 +109,7 @@ Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{
 		\item Cada comptador $M_i$ realitzarà $T_i = c^{x_i} \cdot g^{z_i}$ i envia el resultat a la subestació. En aquest punt de comunicació, $M_i$ eliminarà $z_i$ de la seva memòria.
 		\item Un cop la subestació rep tots els $T_i$, computarà:
 		\[D = d \cdot \Big( T_i \Big)^{-1} = P \cdot g^m\]
-		Com que $P < 2^{l \cdot n}$, ja que cada $p_i$ té, com a màxim, una llargada en bits $l$, la subestació pot determinar com a probablement satisfent 
+		Com que $P < 2^{l \cdot n}$, ja que cada $p_i$ té, com a màxim, una llargada en bits $l$, la subestació pot determinar 
 	\end{enumerate}
 \end{enumerate}
 
