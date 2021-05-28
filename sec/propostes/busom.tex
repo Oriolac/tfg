@@ -8,17 +8,17 @@ La protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la sube
 	\label{fig:busom}
 \end{figure}
 
-\subsection{Procediment}
-\subsubsection{Configuració del sistema}
+\subsubsection{Procediment}
+\myparagraph{Configuració del sistema}
 Al ser un protocol de tipus agregatiu utilitzant el sistema criptogràfic ElGamal amb la propietat homomòrfica en la multiplicació, la configuració del sistema serà el següent:
 \begin{itemize}
 	\item Dos primers $p$ i $q$ sent $p = 2q+1$.
 	\item Un generador $g \in \mathbb{Z}_p^*$ d'ordre $q$.
 	\item Un sistema de certificats digitals perquè la subestació reconegui els comptadors intel·ligents del seu barri.
 \end{itemize}
-\subsubsection{Establiment de clau pública Diffie-Hellman}
+\myparagraph{Establiment de clau pública Diffie-Hellman}
 Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{La clau secreta és creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge\footnote{Protocol que estableix un mètode per comprovar quelcom sense haver de revelar la veracitat de la declaració. En aquest cas, s'ha de comprovar que el comptador forma part del conjunt o barri.} sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
-\subsubsection{Transmissió del consum}
+\myparagraph{Transmissió del consum}
 No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades. Per tal d'entendre bé aquest procés, relaxarem el problema de manera que només es fa una iteració. El nombre que representa la iteració $j$, en aquest cas serà $j = 1$.
 \begin{enumerate}
 	\item La subestació sol·licitarà als comptadors les lectures de l'electricitat. En el cas real, la subestació ho demanaria de manera periòdica i cada vegada $j$ incrementaria.
@@ -39,7 +39,7 @@ No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'h
 	Al necessitar realitzar el logaritme discret, es requereix que les lectures siguin petites per tal de no elevar el cost computacional.
 \end{enumerate}
 % cost lineal O(n)
-\subsection{Problema amb la privacitat de les lectures}
+\subsubsection{Problema amb la privacitat de les lectures}
 En \cite{repair-busom} s'explica com una subestació corrupta, sense necessitat de la col·laboració de cap comptador intel·ligent corrupte, pot obtenir la lectura exacta del consum d'un comptador intel·ligent dirigit a una ronda determinada del protocol.
 \\
 \\
@@ -84,12 +84,15 @@ La subestació, per tal d'aconseguir aquesta lectura, s'ha de desviar del protoc
 		El creixement en complexitat temporal per resoldre el logaritme discret és incrementat aproximadament per un factor de $\sqrt{m_{\textrm{max}}} $, que depèn el nombre de comptadors intel·ligents associats al barri.
 	\end{enumerate}
 \end{enumerate}
-Com es pot observar, encara que es puguin saber en una ronda totes les lectures dels comptadors, no es pot saber sobre dos rondes consecutives. No obstant això, per tal de protegir 
-
-%  Com veurem, la subestació es desvia del protocol en una ronda determinada en què no obté cap informació sobre les lectures enviades per els metres durant aquesta ronda. No obstant això, la informació continguda en aquestes dades xifrades es pot obtenir combinant-les amb dades encriptades recollides en properes rondes. La seguretat defecte i la forma en què una subestació malmesa pot obtenir avantatges d’això es descriu ara. L’esmentat defecte de seguretat permetria, en realitat desplegament, una subestació danyada per aconseguir a tots els individus lectures de qualsevol comptador del seu barri. Al millor dels nostres coneixement, aquest defecte de seguretat no s’havia informat abans. Al pas 2 del protocol (vegeu la figura 1), en lloc d'enviar c als metres, la subestació genera i envia un valor cˆ calculat com cˆ = gv per a un conegut i triat aleatòriament enter v. Cada metre, en rebre cˆ, realitzarà el pas 3 com de costum, tornant Tˆ Com a resultat:
-
-\subsubsection{Sol·lució proposada}
-Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{repair-busom} es proposa una modificació del protocol per a que al final de cada ronda, la subestació hagi d'estar forçada a enviar als comptadors una prova que s'ha format el protocol de manera correcta. En cas de no superar la prova, els comptadors requeriran tornar a realitzar una nova configuració de claus. En el procediment s'afegeix:
+Aquest atac es pot realitzar de manera distribuïda en tots els comptadors intel·ligents, és a dir, d'una ronda en específic es pot agafar les lectures de tots els comptadors. No obstant això, el preu que es paga per realitzar-ho és perdre la lectura dels comptadors de la ronda següent.
+\myparagraph{Sol·lució proposada}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=13cm]{umls/garra.png}
+	\caption{Diagrama de seqüència de la sol·lució proposada en el problema de la privacitat de Busom}
+	\label{fig:garra}
+\end{figure}
+Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{repair-busom} es proposa una modificació del protocol per a que al final de cada ronda, la subestació hagi d'estar forçada a enviar als comptadors una prova que s'ha format el protocol de manera correcta. El diagrama de seqüència d'aquest nou sistema es troba la \cref{fig:garra}. En cas de no superar la prova, els comptadors requeriran tornar a realitzar una nova configuració de claus. En el procediment s'afegeix:
 \begin{enumerate}
 	\item En la \textit{configuració del sistema}, s'afegirà del original:
 	\begin{itemize}
@@ -101,7 +104,7 @@ Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{
 	\item Per tal d'explicar els canvis en la \textit{transmissió del consum}, s'ha preferit explicar tot el procès de comunicació.
 	\begin{enumerate}
 		\item La subestació demana a tots els comptadors intel·ligents que pertanyen al seu barri les seves lectures mitjançant un missatge de sol·licitud.
-		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna en la taula de precomputació++. Llavors, el missatge xifrat està compost per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
+		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna en la taula de precomputacióz. Llavors, el missatge xifrat està compost per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
 		\[E_y(p_i \cdot g^{m_i + z_i}) = (c_i, d_i) = (g^r, p_i \cdot g^{m_i + z_i} \cdot y^{r_i})\]
 		\item La subestació agregarà tots els missatges xifrats rebuts
 		\[(c, d) = \Big( \prod c_i, \; \prod d_i \Big) = (g^r,\; P \cdot g^{m + z} \cdot y^r)\]
@@ -109,7 +112,11 @@ Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{
 		\item Cada comptador $M_i$ realitzarà $T_i = c^{x_i} \cdot g^{z_i}$ i envia el resultat a la subestació. En aquest punt de comunicació, $M_i$ eliminarà $z_i$ de la seva memòria.
 		\item Un cop la subestació rep tots els $T_i$, computarà:
 		\[D = d \cdot \Big( T_i \Big)^{-1} = P \cdot g^m\]
-		Com que $P < 2^{l \cdot n}$, ja que cada $p_i$ té, com a màxim, una llargada en bits $l$, la subestació pot determinar 
+		Com que $P < 2^{l \cdot n}$, ja que cada $p_i$ té, com a màxim, d'ordre de $l$ bits , la subestació podrà determinar $m$ mitjançant
+		\[D \cdot a_m  < 2^{l \cdot n}\]
+		A més a més, com que $D \cdot a_m = P \cdot g^m \cdot a_m = P \cdot g^m \cdot (g^m)^{-1} = P$, la subestació pot factoritzar $P$ i enviar els primers resultants en una llista ordenada $p_v$ a cada comptador.
+		\item Cada comptador comprova que la llargada de $p_v$ és $|p_v| = n$ i que $p_i \in p_v$. En cas que la comprovació d'algun comptador fallés, aquest hauria de demanar tornar a la fase d'establiment de claus i totes les claus publiques haurien de ser renovades. D'aquesta manera, els comptadors saben que la subestació no els ha estat enganyant per tal d'atacar la seva privacitat
+		
 	\end{enumerate}
 \end{enumerate}
 

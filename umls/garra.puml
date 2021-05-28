@@ -1,0 +1,48 @@
+@startuml garra
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+hnote across: Key Stablishment
+"Smart Meter M<sub>i</sub>" -> "Substation": sendPublicKey(//y<sub>i</sub>// , //Cert<sub>i</sub>//)
+note left
+    Secret key : <latex>x_{i}</latex>
+    Public key : <latex>y_{i} = g^{x_i}</latex>
+end note 
+Substation --> "Smart Meter M<sub>i</sub>" :  // y<sub>1</sub>, ... , y<sub>n</sub> ; Cert<sub>1</sub>, ... , Cert<sub>n</sub> //
+note right: if //Cert<sub>i</sub>// is correct
+note left
+    <latex>y = \prod_{i = 1}^{n} y_i</latex>
+    Group public key: <latex>y</latex>
+end note
+hnote across: Consumption transmission
+loop for each message m<sub>i j</sub> in M<sub>i</sub>
+    "Smart Meter M<sub>i</sub>" -> "Substation" : sendCiphertext//( c<sub>i j</sub> , d<sub>i j</sub> )//
+    note left
+        Reading: <latex>m_{i j}</latex>
+        <latex>z_{i j} \in_R \mathbb{Z}_q^*</latex>
+        <latex>p_{i j} \in_R \mathbb{P}</latex>
+        <latex>E_y(p_{i j} \cdot g^{m_{i j} + z_j}) = (c_{i j}, d_{i j})</latex>
+    end note
+    Substation --> "Smart Meter M<sub>i</sub>" : c<sub>j</sub>
+    note right
+        <latex>C_j = (\prod_{i=1}^{n} c_{i j} , \prod_{i=1}^{n} d_{i j}) =</latex>
+        <latex>(g^r , P_j \cdot g^{m_j + z_j} \cdot y^r) = (c_j,d_j)</latex>
+        with m<sub>j</sub>, <latex>m_j = \sum_{i=1}^n m_{i j}</latex>
+        z<sub>j</sub>, <latex>z_j = \sum_{i=1}^n z_{i j}</latex>
+        and P<sub>j</sub> = <latex>P_j = \prod_{i=1}^n p_{i j}</latex>
+    end note
+    "Smart Meter M<sub>i</sub>" -> "Substation" : T<sub>i j</sub>
+    note left
+        <latex>T_{i j} = c^{x_i} \cdot g^{z_{i j}}</latex>
+    end note
+    note right
+        <latex>D_j = d \cdot (\prod_{i=1}^{n} T_{i j})^{-1} = P_j \cdot g^{m_j}</latex>
+        Find <latex>m_j</latex> such that
+        <latex>D \cdot a_m  < 2^{l \cdot n}</latex>, <latex>P = D \cdot a_m</latex>
+        Factorize // P // and sends a list of its factors // p<sub>v</sub> //
+    end note
+    Substation --> "Smart Meter M<sub>i</sub>" : p<sub>v</sub>
+    note left
+    Check <latex>p_{i j} \in p_v</latex>
+    end note
+end
+@enduml
