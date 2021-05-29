@@ -1,0 +1,11 @@
+@startuml cripto
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+interface Hash
+interface Cypher
+interface Decipher
+class CypherImpl
+class DecipherImpl
+Cypher <|.. CypherImpl
+Decipher <|.. DecipherImpl
+@enduml

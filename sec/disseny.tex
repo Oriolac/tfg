@@ -1,9 +1,33 @@
 \newcommand{\java}{Java 8}
-\newcommand{\maven}{Apache Maven 3.6.3}
+\newcommand{\mavenLarge}{Apache Maven 3.6.3}
+\newcommand{\maven}{\texttt{maven} }
+\newcommand{\ciglib}{\texttt{CigLib} }
+\newcommand{\toml}{\texttt{Toml}}
 
-\begin{document}La simulació del projecte s'ha implementat utilitzant \texttt{\java} i \texttt{\maven} per la gestió de paquets. La inclinació per utilitzar \texttt{\java} és a causa que es va crear una llibreria anomenada \texttt{CigLib} creada en un principi per Víctor Mateu, que recollia implementacions de sistemes de xifratge i signatures. Actualment, la llibreria està penjada a un repositori remot i es pot instal·lar la seva dependència remotament \cite{ciglib}.
+\begin{document}
+\section{Anàlisis de requisits}
+Des d'un punt de vista general, al voler realitzar una simulació, els requisits del projecte no tenen la projecció d'un entorn realista, ja que l'objectiu és dur a terme un anàlisis dels costos empírics del projecte, com per exemple, veure on està el coll d'ampolla o mesurar i poder parametritzar els valors més idonis pel protocol.
+\\
+\\
+En més concret, s'han trobat els següents requisits:
+\begin{itemize}
+	\item Des del punt de vista d'arquitectura de xarxa, es pot veure clarament que el model es pot definir com client/servidor, ja que la interacció entre les diferents entitats és centralitzada.
+	\item És important mantenir el codi més obert possible per tal de realitzar els canvis de la manera més còmode, sobretot en els següents apartats: la connexió entre els clients i el servidor i la incorporació de diferents criptosistemes per realitzar el xifratge.
+	\item S'ha de tenir en consideració el llenguatge i les eines a utilitzar per tal de facilitar la lògica.
+	\item S'ha d'intentar tenir la capacitat de realitzar els canvis sobre les diferents paquets i llibreries en cas que es necessiti.
+	\item Un cop creada la implementació, s'ha de poder realitzar un anàlisis de costs el més detallat possible.
+	\item El sistema tant pel punt de vista del comptador com per la subestació ha de ser totalment configurable. És a dir, s'ha de passar per paràmetre la configuració del protocol explicada en la secció \ref{sec:configuracio-recsi}.
+\end{itemize}
+\subsection{Característiques tècniques}
+La simulació del projecte s'ha implementat utilitzant \texttt{\java} i \texttt{\mavenLarge} per la gestió de paquets. La inclinació per utilitzar \texttt{\java} és degut a la llibreria \ciglib creada per Víctor Mateu, que recopila implementacions tant de sistemes criptogràfic com de funcions hash, entre altres. D'aquesta forma, s'intenta assolir el màxim els requisits detallats anteriorment.
+\\
+\\
+A l'utilitzar \maven per la gestió de paquets i dependència, s'ha canviat la estructura de la llibreria i s'ha pujat a un repositori remot \cite{ciglib}. Per instal·lar-la només cal configurar el servidor de \texttt{GitHub} a \maven i cridar la dependència al projecte que es vulgui.
+\\
+\\
+Per realitzar la configuració, s'ha decidit utilitzar el format \toml\footnote{Format de fitxer per a fitxers de configuració.} ja que és fàcil i ràpid de llegir i d'escriure a causa de la seva sintaxis i semàntica minimalista i està dissenyat per transformar sense ambigüitats el fitxer a un diccionari.
 \section{Criptografia}
-
+A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi més obert possible per a possibles futurs canvis. A fi de realitzar-ho, s'han creat interfícies, les implementacions les quals aporten la lògica de xifrar i desxifrar.
 \section{Connexió}
 \subsection{Data Transfer Objects}
 \section{Protocol}

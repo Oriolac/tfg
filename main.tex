@@ -318,6 +318,7 @@ En l'actualitat s'ha proposat tres tipus de mecanismes o estratègies per tal de
 \section{Sistemes d'anonimitat}
 \subfile{sec/anonimitat.tex}
 \section{Sistemes agregatius}
+En els sistemes agregatius, no és preocupa tant de la identitat del comptador ni intenta manipular una mica el significat de les lectures per tal de no suggerir més informació del compte. En comptes, s'agreguen els comptadors en un conjunt anomenat \textit{barri} per tal que la subestació només pugui saber el resultat agregat, evitant així informació individual. El mètode més popular per tal de passar les dades de manera xifrada és usant encriptació homomòrfica. 
 \subsection{Proposta Busom}
 \subfile{sec/propostes/busom.tex}
 \subsection{L'actual proposta}
@@ -333,7 +334,7 @@ Així doncs, es pot diferenciar dos estats ben diferenciats d'aquest protocol:
 	\includegraphics[width=16cm]{umls/recsi.png}
 	\caption{Diagrama de seqüència del protocol RECSI}
 \end{figure}
-\subsubsection{Configuració}
+\subsubsection{Configuració}\label{sec:configuracio-recsi}
 Abans d'engegar el sistema, es necessita que tant els comptadors com la subestació utilitzin el mateix cos i element generador per tal de xifrar i desxifrar correctament els missatges. Per tant, s'haurà d'elegir:
 \begin{itemize}
 	\item Corba el·líptica $E$ definida sobre un cos primer $F_q$ d'ordre $p$ d'almenys 256 bits.
@@ -377,7 +378,7 @@ La transmissió dels comptadors intel·ligents a la subestació es realitza de m
 \newpage\part{Disseny de la implementació}\label{part:disseny}
 \subfile{sec/disseny.tex}
 \part{Anàlisis}\label{part:analisis}
-\subsection{Algorismes de computació del logaritme discret}
+\section{Algorismes de computació del logaritme discret}
 
 \bibliography{document}
 \bibliographystyle{unsrt}
