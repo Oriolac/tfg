@@ -42,6 +42,8 @@
 \usepackage{cleveref}
 \usepackage{tikz}
 \usepackage{enumitem}
+\usepackage{xpatch}
+\usepackage{refcount}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +80,14 @@
 \nc{\probl}[2]{P({#1}|{#2})}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%% TREE CREATOR %%%%%%%%%%%%
+%%%%%%%%%%%%% FUNCTIONS %%%%%%%%%%%%
+
+\nc{\numitems}[1]{\getrefnumber{#1}}
+\newcounter{itemcntr}
+\AtBeginEnvironment{itemize}{%
+	\setcounter{itemcntr}{0}%
+	\xapptocmd{\item}{\refstepcounter{itemcntr}}{}{}%
+}
 
 \setpapersize{A4}
 
@@ -353,7 +362,7 @@ La clau generada per cada comptador ha de ser d'una llargada similar a l'ordre d
 \begin{enumerate}
 	\item Cada comptador $M_i$ generarà el seu secret $s_i < p$. Aquesta serà dividida en $l$ \textit{chunks} de, com a màxim, 13 bits, de manera que:
 	\[s_i = (s_{il}\ ||\ \dots ||\ s_{i_2}\ ||\ s_{i1})\]
-	Es requereix que $13 \cdot l$ sigui igual o més gran que la llargada en bits de $p$. Per tal de passar-ho de manera segura sense que la subestació pugui saber una part del secret del comptador, es realitza  $l$ vegades el protocol de Busom \cite{busom}.
+	Es requereix que $13 \cdot l$ sigui igual o més gran que la llargada en bits de $p$. Per tal de passar-ho de manera segura sense que la subestació pugui saber una part del secret del comptador, s'usa el protocol de Busom \cite{busom} enviant $l$ paquets en la fase de transmissió corresponent al nombre de chunks a enviar.
 	\item Després de cada execució $j \ , \ \ 1 \le j \le l$ del pas 1, la subestació realitza el sumatori de la mateixa part $j$ en totes les claus, de manera que troba:
 	\[s_{1j} + s_{2j} + \dots + s_{nj} = \sum_{i=1}^{n} s_{ij}\]
 	\item Un cop calculats tots els \textit{chunks} resultants, la subestació computa:
@@ -379,7 +388,7 @@ La transmissió dels comptadors intel·ligents a la subestació es realitza de m
 \subfile{sec/disseny.tex}
 \part{Anàlisis}\label{part:analisis}
 \section{Algorismes de computació del logaritme discret}
-
+\section{Comparació entre diferents barris}
 \bibliography{document}
 \bibliographystyle{unsrt}
 

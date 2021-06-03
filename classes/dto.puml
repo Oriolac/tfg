@@ -1,0 +1,21 @@
+@startuml dto
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+interface SMSDatagram
+class BigIntegerDatagram
+class CipherTextDatagram
+class EndOfDatagram
+class GroupElementDatagram
+class NeighborhoodDatagram<T>
+SMSDatagram <|.. BigIntegerDatagram
+SMSDatagram <|.. CipherTextDatagram
+SMSDatagram <|.. EndOfDatagram
+SMSDatagram <|.. GroupElementDatagram
+SMSDatagram <|.. NeighborhoodDatagram
+BigIntegerDatagram : BigInteger bigInteger
+CipherTextDatagram : HomomorphicCipherText ciphertext
+GroupElementDatagram : GroupElement groupElement
+NeighborhoodDatagram : T certificate
+NeighborhoodDatagram : GroupElement groupElement
+SMSDatagram : byte[] toByteArray()
+@enduml

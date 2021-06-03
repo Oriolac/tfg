@@ -1,0 +1,8 @@
+@startuml statemachine
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+interface State {
+    State next()
+}
+class Context
+@enduml
