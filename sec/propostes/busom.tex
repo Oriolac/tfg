@@ -17,7 +17,7 @@ Al ser un protocol de tipus agregatiu utilitzant el sistema criptogràfic ElGama
 	\item Un sistema de certificats digitals perquè la subestació reconegui els comptadors intel·ligents del seu barri.
 \end{itemize}
 \myparagraph{Establiment de clau pública Diffie-Hellman}
-Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{La clau secreta és creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^x$ juntament amb una prova zero-knowledge\footnote{Protocol que estableix un mètode per comprovar quelcom sense haver de revelar la veracitat de la declaració. En aquest cas, s'ha de comprovar que el comptador forma part del conjunt o barri.} sobre $log_g(y_i)$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
+Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. Cada comptador té la seva clau secreta\footnote{La clau secreta és creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fan públic $y_i = g^{x_i}$ juntament amb una prova zero-knowledge\footnote{Protocol que estableix un mètode per comprovar quelcom sense haver de revelar la veracitat de la declaració. En aquest cas, s'ha de comprovar que el comptador forma part del conjunt o barri.} sobre $log_g(y_i)$, on cada compte demostra que coneix el seu valor secret $x_i$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
 \myparagraph{Transmissió del consum}
 No obstant s'ha aconseguit una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'obtindrà l'avantatge de la propietat homomòrfica d'ElGamal per tal de protegir les dades. Per tal d'entendre bé aquest procés, relaxarem el problema de manera que només es fa una iteració. El nombre que representa la iteració $j$, en aquest cas serà $j = 1$.
 \begin{enumerate}
@@ -48,7 +48,7 @@ La subestació, per tal d'aconseguir aquesta lectura, s'ha de desviar del protoc
 	\item Primera ronda.
 	\begin{enumerate}
 		\item En lloc d'enviar $c \in C$ tal i com es diu en el pas \ref{en:busom-s1}, la subestació envia $\hat{c}$ generant de manera aleatòria un valor $v$:
-		\[\hat{c} = g^v \quad t.q \quad v \in {\mathbb{Z}_{q}}_R\]
+		\[\hat{c} = g^v \quad t.q \quad v \in_R {\mathbb{Z}_{q}}\]
 		\item Els comptadors, realitzaran de forma normal l'operació del pas \ref{en:busom-m1}, retornant com a resultat:
 		\[\hat{T}_i = (\hat{c})^{x_i} \cdot g^{z_i} = (g^v)^{x_i} \cdot g^{z_i} = y_i^v \cdot g^{z_i}\]
 		\item Gràcies a que el valor $y_i$ de cada comptador és la seva clau pública, la subestació pot saber $g^{z_i}$ realitzant:

@@ -3,8 +3,8 @@ El sistemes d'anonimitat intenten abordar el problema de la privadesa anonimitza
 \\\\
 En \cite{anonimity}, es proposa tenir dos identificadors per cada comptador intel·ligent, depenent de les dades que es vulguin extreure:
 \begin{itemize}
-	\item HFID o High-Frequency ID serà l'identificador per passar les dades que violen la privadesa de la llar. Aquestes dades són les que s'envien en una freqüència molt més alta i poden suggerir informació que vulneri la privacitat dels consumidors.
-	\item LFID o Low-Frequency ID serà l'identificador que s'usarà per passar les dades de gra gruixut, és a dir, informació que es passa setmanalment o mensualment i que no pot aportar informació molt detallada sobre la llar.
+	\item HFID o High-Frequency ID serà l'identificador per passar les dades que violen la privadesa de la llar. Aquestes dades són les que s'envien en una freqüència molt més alta i poden suggerir informació que vulneri la privacitat dels consumidors. Aquestes dades correspondrien al consum de 15 o 30 minuts de la llar.
+	\item LFID o Low-Frequency ID serà l'identificador que s'usarà per passar les dades de gra gruixut, és a dir, informació que es passa setmanalment o mensualment i que no pot aportar informació molt detallada sobre la llar. Aquest tipus de dades s'usa per calcular la factura elèctrica.
 \end{itemize}
 Per tal d'anonimitzar l'identificador d'alta freqüència, hi ha la restricció que aquest mai sigui conegut pel servei públic ni subestació, sinó per una tercera entitat\footnote{Que podria ser el fabricant dels comptadors o qualsevol altra que li hagi proporcionat coneixement} que tingui la relació sobre els dos identificadors. A causa d'això, és realment important que aquesta tercera entitat no tingui coneixement sobre les lectures dels comptadors, doncs hi hauria vulnerabilitat en la privadesa.
 \\
