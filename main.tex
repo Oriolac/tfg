@@ -44,7 +44,7 @@
 \usepackage{enumitem}
 \usepackage{xpatch}
 \usepackage{refcount}
-
+\usepackage{color}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
@@ -96,7 +96,28 @@
 
 \def\contentsname{Índex}
 \begin{document}
-	
+
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	showstringspaces=false,
+	commentstyle=\color{gray}\upshape
+}
+
+\lstdefinelanguage{XML}
+{
+	morestring=[b]",
+	morestring=[s]{>}{<},
+	morecomment=[s]{<?}{?>},
+	stringstyle=\color{black},
+	identifierstyle=\color{darkblue},
+	keywordstyle=\color{cyan},
+	morekeywords={xmlns,version,type}% list your attributes here
+}
+
 
 \begin{titlepage}
 \begin{figure}[htb]
@@ -433,7 +454,7 @@ La transmissió dels comptadors intel·ligents a la subestació es realitza de m
 
 \newpage\part{Disseny de la implementació}\label{part:disseny}
 \subfile{sec/disseny.tex}
-\part{Anàlisis}\label{part:analisis}
+\newpage\part{Anàlisis}\label{part:analisis}
 \section{Algorismes de computació del logaritme discret}
 \section{Comparació entre diferents barris}
 \bibliography{document}

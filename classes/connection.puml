@@ -1,0 +1,32 @@
+@startuml connection
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+interface cat.udl.cig.sms.connection.ReceiverMeter {
+    + SMSDatagram receive()
+}
+interface cat.udl.cig.sms.connection.ReceiverSubstation {
+    + List<SMSDatagram> receive()
+}
+interface cat.udl.cig.sms.connection.Sender {
+    + void send(SMSDatagram)
+}
+interface cat.udl.cig.sms.connection.ConnectionMeterInt extends cat.udl.cig.sms.connection.ReceiverSubstation, cat.udl.cig.sms.connection.Sender {
+    + void close()
+}
+interface cat.udl.cig.sms.connection.ConnectionSubstationInt extends cat.udl.cig.sms.connection.ReceiverMeter, cat.udl.cig.sms.connection.Sender
+class cat.udl.cig.sms.connection.ConnectionMeter implements cat.udl.cig.sms.connection.ConnectionMeterInt {
+    - DataInputStream in
+    - DataOutputStream out
+}
+class cat.udl.cig.sms.connection.ConnectionSubstation implements cat.udl.cig.sms.connection.ConnectionSubstationInt {
+    - List<Socket> acceptSockets()
+}
+class java.net.Socket
+class java.net.ServerSocket
+java.net.Socket *-- cat.udl.cig.sms.connection.ConnectionSubstation
+java.net.ServerSocket <-- cat.udl.cig.sms.connection.ConnectionSubstation
+java.net.Socket <-- cat.udl.cig.sms.connection.ConnectionMeter
+java.net.Socket -[hidden]-> cat.udl.cig.sms.connection.ConnectionMeterInt
+
+
+@enduml

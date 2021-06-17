@@ -24,10 +24,16 @@ En més concret, s'han trobat els següents requisits:
 La simulació del projecte s'ha implementat utilitzant \texttt{\java} i \texttt{\mavenLarge} per la gestió de paquets. La inclinació per utilitzar \texttt{\java} és degut a la llibreria \ciglib creada per Víctor Mateu, que recopila implementacions tant de sistemes criptogràfic com de funcions hash, entre altres. D'aquesta forma, s'intenta assolir el màxim els requisits detallats anteriorment.
 \\
 \\
-A l'utilitzar \maven per la gestió de paquets i dependència, s'ha canviat la estructura de la llibreria i s'ha pujat a un repositori remot \cite{ciglib}. Per instal·lar-la només cal configurar el servidor de \texttt{GitHub} a \maven i cridar la dependència al projecte que es vulgui.
-\\
-\\
-Per realitzar la configuració, s'ha decidit utilitzar el format \toml\footnote{Format de fitxer per a fitxers de configuració.} ja que és fàcil i ràpid de llegir i d'escriure a causa de la seva sintaxis i semàntica minimalista i està dissenyat per transformar sense ambigüitats el fitxer a un diccionari.
+A l'utilitzar \maven per la gestió de paquets i dependència, s'ha canviat la estructura de la llibreria i s'ha pujat a un repositori remot \cite{ciglib}. Per instal·lar-la només cal configurar el servidor de \texttt{GitHub} a \maven i cridar la dependència des de la configuració del projecte.
+\lstset{language=xml}
+\begin{lstlisting}
+<dependency>
+	<groupId>cat.udl.cig</groupId>
+	<artifactId>cig-lib</artifactId>
+	<version>1.0-SNAPSHOT</version>
+</dependency>
+\end{lstlisting}
+Pel que fa a la configuració del sistema, s'ha decidit utilitzar el format \toml\footnote{Format de fitxer per a fitxers de configuració.} ja que és fàcil i ràpid de llegir i d'escriure a causa de la seva sintaxis i semàntica minimalista i està dissenyat per transformar sense ambigüitats el fitxer a un diccionari.
 \section{Disseny}
 El projecte es divideix en un total de \numitems{list:packages} paquets que s'encarreguen de diferents responsabilitats.
 \begin{itemize}
@@ -46,9 +52,21 @@ La configuració del sistema i de cada entitat (sigui comptador o subestació ) 
 		\item El punt generador de la corba.
 		\item El cos primer de la corba.
 	\end{itemize}
-	Les dades d'aquest fitxer estaran encapsulades a la classe \texttt{CurveReader}, que funcionarà com una \texttt{dataclass}\footnote{Classe que només té la responsabilitat d'encapsular informació.}.
+	Les dades d'aquest fitxer estaran encapsulades a la classe \texttt{CurveConfiguration}, que funcionarà com una \texttt{dataclass}\footnote{Classe que només té la responsabilitat d'encapsular informació.}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=4.5cm]{classes/curve.png}
+		\caption{Classe \texttt{CurveConfiguration}}
+		\label{fig:curve}
+	\end{figure}
+	\item Fitxer de configuració de xarxa, on vindrà donada la direcció $ip$ del servidor i el seu port on escoltarà. D'aquesta manera, la subestació, donada aquesta configuració crearà un \texttt{ServerSocket} per escoltar en el port i cada comptador crearà un \texttt{Socket} que estarà enllaçat al socket del servidor. S'ha creat mètodes estàtics en la classe \texttt{SocketReader} que realitzaran la lectura del fitxer de configuració i crearan el socket que faci falta.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=6cm]{classes/socket.png}
+		\caption{Classe \texttt{SocketReader}}
+		\label{fig:socket}
+	\end{figure}
 	
-	\item Fitxer de configuració de xarxa, on vindrà donada la direcció $ip$ del servidor i el seu port on escoltarà. D'aquesta manera, la subestació, donada aquesta configuració crearà un \texttt{ServerSocket} per escoltar en el port i cada comptador crearà un \texttt{Socket} que estarà enllaçat al socket del servidor.
 \end{itemize}
 \subsection{Connexió}
 En \texttt{connection} trobem 3 interfícies que representen les diferents responsabilitats del paquet:
@@ -58,16 +76,29 @@ En \texttt{connection} trobem 3 interfícies que representen les diferents respo
 	\item \texttt{Sender }només s'encarregarà d'enviar \dto ja sigui de part d'un comptador o de la subestació.
 \end{itemize}
 La implementació d'aquestes interfícies s'ha realitzat usant les classes \texttt{Socket} i \texttt{ServerSocket} de \texttt{java.net} pels comptadors i la subestació respectivament.
+\begin{figure}[H]
+	\includegraphics[width=15cm]{classes/connection.png}
+	\caption{Diagrama de classe del paquet connection}
+	\label{fig:connection}
+\end{figure}
 \subsubsection{Data Transfer Objects}
-Al haver de realitzar enviaments amb diferent contingut, s'han creat 5 datagrames, com es pot observar a la \textit{Figura \ref{fig:dto}}. En cada una de les classes s'ha usat el patró \textit{abstract factory} per serialitzar-los. S'ha realitzat una interfície anomenada \factoryDTO on cada implementació incorporarà la serialització del seu respectiu datagrama.
+Al haver de realitzar enviaments amb diferent contingut, s'han creat 5 datagrames, tal i com es pot observar a la \textit{Figura \ref{fig:dto}}. En cada una de les classes s'ha usat el patró \textit{factory method}, creant la interfície \texttt{SMSDatagram}, per serialitzar-los a la nostra manera.
 \begin{figure}[H]
 	\includegraphics[width=15cm]{classes/dto.png}
 	\caption{Diagrama de classe dels DTO}
 	\label{fig:dto}
 \end{figure}
-% TODO DTO umls
+A més a més, en algun moment voldrem desserialitzar-los, és a dir, donat un vector de bytes, obtenir un objecte de la classe \texttt{SMSDatagram}. Com que \texttt{\java } no soporta interfícies o classes abstractes amb mètodes estàtics per definir, s'ha creat una altra interfície anomenada \texttt{SMSDatagramSerializer} amb el mètode \texttt{fromBytes} les implementacions la qual retornaran un \texttt{SMSDatagram}. Amb l'objectiu de saber quin serialitzador usar en cada cas només sabent l'array de bytes, s'ha creat la classe \texttt{SerializerRepository}, un \textit{singleton} que contindrà totes les serialitzacions i, usant el mètode \texttt{buildDatagramFromInput} retornarà el datagrama que correspongui.
+\begin{figure}[H]
+	\includegraphics[width=16cm]{classes/dtoser.png}
+	\caption{Diagrama de classe dels serialitzadors de DTO}
+	\label{fig:dtoser}
+\end{figure}
+
+
 \subsection{Criptografia}
-A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi més obert possible per a possibles futurs canvis. A fi de realitzar-ho, s'han creat interfícies, les implementacions les quals aporten la lògica de xifrar i desxifrar.
+A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi més obert possible per a possibles futurs canvis. Per exemple, en el cas de voler usar un altre criptosistema homomòrfic per passar les claus de manera xifrada, només caldria que aquest heretés de \texttt{HomomorphicCypher} a $DecryptChunk$. 
+%A fi de realitzar-ho, s'han usat les interfícies les implementacions les quals aporten la lògica de xifrar i desxifrar.
 \subsubsection{CigLib}
 
 \subsubsection{Integració al projecte}

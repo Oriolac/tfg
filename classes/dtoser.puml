@@ -1,0 +1,49 @@
+@startuml dtoser.puml
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+namespace cat.udl.cig.sms.connection.datagram.serializer{
+
+interface SMSDatagramSerializer {
+    + SMSDatagram fromBytes(byte[] bytes)
+}
+class BigIntegerDatagramSerializer {
+    - {static} int BIG_INTEGER_SIZE
+}
+class CipherTextDatagramSerializer {
+    - int LENGTH_CURVE
+    - {static} int NUM_POINTS
+    - CurveConfiguration curveConfiguration
+    - RingElement fromBytes(byte[] bytes, int from, int to)
+}
+class EndOfDatagramSerializer {
+    
+}
+class GroupElementDatagramSerializer {
+    - int LENGTH_CURVE
+    - {static} int NUM_RING_ELEMENTS
+    - CurveConfiguration curveConfiguration
+    - RingElement fromBytes(byte[] bytes, int from, int to)
+}
+class NeighborhoodDatagramSerializer<T> {
+    - int LENGTH_CURVE
+    - {static} int NUM_RING_ELEMENTS
+    - {static} int LENGTH_CERTIFICATE
+    - CurveConfiguration curveConfiguration
+    - RingElement fromBytes(byte[] bytes, int from, int to)
+}
+class SerializerRepository {
+    - {static} SerializerRepository factory;
+    - SMSDatagramSerializer[] serializers
+    - void constructSerializers(CurveConfiguration loadcurve)
+    + {static} SerializerRepository getSerializerRepository(CurveConfiguration loadcurve)
+    + SMSDatagram buildDatagramFromInput(InputStream in)
+}
+
+SMSDatagramSerializer <|.. BigIntegerDatagramSerializer
+SMSDatagramSerializer <|.. CipherTextDatagramSerializer
+SMSDatagramSerializer <|.. EndOfDatagramSerializer
+SMSDatagramSerializer <|.. GroupElementDatagramSerializer
+SMSDatagramSerializer <|.. NeighborhoodDatagramSerializer
+SMSDatagramSerializer *-- SerializerRepository
+}
+@enduml

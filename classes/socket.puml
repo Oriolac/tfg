@@ -1,0 +1,8 @@
+@startuml socket
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+class SocketReader {
+    + {static} Socket tomlToSocket(File fileMeter)
+    + {static} ServerSocket tomlToServerSocket(File fileSubstation)
+}
+@enduml

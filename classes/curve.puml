@@ -1,0 +1,13 @@
+@startuml curve
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+class CurveConfiguration {
+    - ECPrimerOrderSubgroup group;
+    - PrimeField field;
+    - GeneralEC curve;
+    + ECPrimerOrderSubgroup getGroup()
+    + PrimeField getField()
+    + GeneralEC getCurve()
+    + {static} P192()
+}
+@enduml
