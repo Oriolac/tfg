@@ -1,0 +1,9 @@
+@startuml busom
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+
+[*] --> KeyEstablishment
+KeyEstablishment --> ConsumptionTransmission
+ConsumptionTransmission --> ConsumptionTransmission
+ConsumptionTransmission --> KeyEstablishment
+@enduml

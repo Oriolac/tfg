@@ -5,8 +5,11 @@ CONNECTION = connection
 DTOSER = dtoser
 CURVE = curve
 SOCKET = socket
+LOG = log
+RECSI = recsi
+BUSOMPROT = busomprot
 
-all: $(CRIPTO) $(DTO) $(STATEMACHINE) $(CONNECTION) $(DTOSER) $(CURVE) $(SOCKET)
+all: $(CRIPTO) $(DTO) $(STATEMACHINE) $(CONNECTION) $(DTOSER) $(CURVE) $(SOCKET) $(LOG) $(BUSOMPROT)
 	@echo "DONE"
 
 $(CRIPTO):
@@ -29,3 +32,12 @@ $(CURVE):
 	
 $(SOCKET):
 	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(SOCKET).puml
+
+$(LOG):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(LOG).puml
+
+$(RECSI):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(RECSI).puml
+
+$(BUSOMPROT):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(BUSOMPROT).puml

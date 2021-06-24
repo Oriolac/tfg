@@ -1,0 +1,39 @@
+@startuml recsi
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+namespace cat.udl.cig.sms.recsi {
+
+interface State {
+    + State next()
+}
+
+class KeyEstablishmentSubstation implements State {
+    - SubstationBusomControllerInt controller
+    - SubstationContextSubstation context
+}
+
+class ConsumptionTransmissionSubstation implements State {
+    - Decipher decipher
+    - SubstationContextSubstation substationContext
+    - BigInteger privateKey
+    - {static} int NUM_BITS
+    + BigInteger getPrivateKey()
+}
+
+interface SubstationStateContextInt {
+    + void startKeyEstablishment()
+    + Optional<BigInteger> getMessage()
+}
+
+class SubstationStateContext implements SubstationStateContextInt {
+    - CurveConfiguration curveConfiguration
+    - ConnectionSusbtationInt
+    - BigInteger message
+    - State state
+    + KeyEstablishmentSubstation makeKeyEstablishment()
+    + ConsumptionTransmissionSubstation makeConsumptionTransmission(BigInteger privateKey)
+}
+
+State "1" --* "1" SubstationStateContext
+
+@enduml

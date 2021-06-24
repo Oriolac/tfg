@@ -1,0 +1,39 @@
+@startuml busomprot
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+namespace cat.udl.cig.sms.busom {
+interface MeterBusomServiceInt {
+    + void start()
+    + void sendMessage(List<BigInteger> messages)
+}
+class MeterBusomService implements MeterBusomServiceInt {
+    - MeterBusomContextInt context
+    - void meterSetUp()
+}
+MeterBusomService -- MeterBusomContextInt
+BusomState "1" *-- "1" MeterBusomContext
+interface MeterBusomContextInt {
+    + void generatePrivateKey()
+    + void setUpNeighborHood()
+    + void sendChunk(BigInteger message)
+    + void sendPartialDecryption()
+}
+class MeterBusomContext implements MeterBusomContextInt {
+    - BusomState state;
+}
+interface BusomState {
+    BusomState next()
+}
+class BusomSetUp implements BusomState {
+}
+class NeighborhoodSetUp implements BusomState {
+}
+class SendChunk implements BusomState {
+
+}
+class SendPartialDecryption implements BusomState {
+
+}
+
+}
+@enduml

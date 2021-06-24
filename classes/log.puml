@@ -1,0 +1,35 @@
+@startuml log
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+
+namespace cat.udl.cig.operations.wrapper {
+    interface LogarithmAlgorithm {
+        + Optional<BigInteger> log(GroupElement groupElement) 
+        + GroupElement getAlpha()
+    }
+    class BruteForce implements LogarithmAlgorithm {
+        - GroupElement alpha
+        - GroupElement last
+    }
+
+    class HashedAlgorithm implements LogarithmAlgorithm {
+        - GroupElement alpha
+        - BigInteger order
+        - BigInteger times
+        - HashMap<GroupElement, BigInteger> hash
+        - {static} LogarithmAlgorithm hashedInstance
+    }
+
+    class PollardsLambda implements LogarithmAlgorithm {
+        - GroupElement alpha
+        - Group group
+        - BigInteger b
+        - BigInteger N
+        - HashMap<GroupElement, BigInteger> map
+        - void getHashMap()
+        - Optional<BigInteger> getExponent
+        - Pair<GroupElement, BigInteger> getD()
+    }
+
+}
+@enduml
