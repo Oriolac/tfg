@@ -1,0 +1,8 @@
+@startuml recsistate
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+[*] --> KeyEstablishment : Start
+KeyEstablishment --> ConsumptionTransmission : Substation private key generated
+ConsumptionTransmission --> ConsumptionTransmission : Communication of smart meter readings
+ConsumptionTransmission --> KeyEstablishment : Error, Key Renewal
+@enduml

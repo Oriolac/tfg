@@ -1,8 +1,8 @@
 @startuml dto
 !include themes/puml-theme-cerulean-outline.puml
 skinparam backgroundColor #FFFFFF
-interface SMSDatagram
 namespace cat.udl.cig.sms.connection.datagram {
+interface SMSDatagram
 
 class BigIntegerDatagram
 class CipherTextDatagram

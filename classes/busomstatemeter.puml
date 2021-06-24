@@ -1,0 +1,22 @@
+@startuml busomstatemeter
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+[*] --> KeyEstablishment : Start
+state KeyEstablishment {
+    [*] --> BusomSetUp : Start
+    BusomSetUp : Generates the Private Key
+    BusomSetUp --> NeighborhoodSetUp : Private key generated
+    NeighborhoodSetUp : Generates the Public Key
+NeighborhoodSetUp --> Transmission : Public key generated
+}
+state Transmission {
+[*] --> SendChunk : Start
+SendChunk : Sends encrypted transmission
+SendChunk --> SendPartialDescryption : Ciphertext sent
+SendPartialDescryption : Sends computation of agregated ciphertext
+SendPartialDescryption --> SendChunk : Computation sent
+SendPartialDescryption --> [*] : Finish transmission
+SendPartialDescryption --> KeyEstablishment : Error
+}
+
+@enduml

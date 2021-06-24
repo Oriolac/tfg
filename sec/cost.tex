@@ -1,16 +1,17 @@
 \begin{document}
-Pel que fa a l'anàlisis de costos, un dels principals objectius del projecte, s'ha intentat segregar segons els diferents paràmetres on el sistema es pot derivar, que són:
+Pel que fa a l'anàlisis de costos, s'ha intentat segregar segons els diferents paràmetres on el sistema es pot derivar, que són:
 \begin{itemize}
 	\item La mida del sistema agregat, és a dir, el nombre de comptadors d'un barri.
 	\item L'algorisme emprat per tal de realitzar el logaritme discret.
 \end{itemize}
 No obstant això, anteriorment s'ha especificat certes propietats que comporta el sistema:
 \begin{itemize}
-	\item Es considera que entre ronda i ronda passaran hi haurà, com a mínim, un interval de 15 minuts.
-	\item El valor màxim que pot enviar un comptador a una subestació en una ronda és, tenint en compte que serà el valor acumulat ronda i una altra.
+	\item Es considera que entre ronda i ronda hi haurà, com a mínim, un interval de 15 minuts.
 \item Tenint en compte que en un nucli familiar de 3 persones, hi ha un consum mitjà de $2703 \ \ kWh \; / \; any$, es considerarà que el valor mitjà de lectura dels comptadors intel·ligents serà:
 \[\mu = 3272 \ \ \frac{kWh}{any} \cdot \frac{1000 \ Wh}{1 \ kWh} \cdot \frac{1 \ any}{365 \ dies} \cdot \frac{1 \ dia}{24 \ h} = 77,1404\frac{Wh}{h} = 93,3789 \frac{Wh}{15 \ min} \]
 A més a més, el conjunt de lectures del sistema agregat en una ronda seguirà una distribució normal, sent el valor central, el consum mitjà $\mu = 93,3789$ i la una desviació estàndard $\sigma = 50 \frac{Wh}{15 min}$, per tal de realitzar una simulació més real a l'hora d'analitzar el límit del sistema.
+
+\item Per tant, el valor màxim que pot enviar un comptador a una subestació en una ronda és, $v_{max} = 143,4 \frac{Wh}{15 min}$ i el valor mínim $v_{min} =  43,4 \frac{Wh}{15 min}$
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=10cm]{imgs/cost/normal.png}

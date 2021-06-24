@@ -3,8 +3,8 @@
 \newcommand{\maven}{\texttt{maven} }
 \newcommand{\ciglib}{\texttt{CigLib} }
 \newcommand{\toml}{\texttt{Toml}}
-\nc{\dto}{\texttt{DTO} }
-\nc{\factoryDTO}{\texttt{FactorySMSDatagram} }
+\newcommand{\dto}{\texttt{DTO} }
+\newcommand{\factoryDTO}{\texttt{FactorySMSDatagram} }
 
 \begin{document}
 \section{Anàlisis de requisits}
@@ -21,7 +21,19 @@ En més concret, s'han trobat els següents requisits:
 	\item El sistema tant pel punt de vista del comptador com per la subestació ha de ser totalment configurable. És a dir, s'ha de passar per paràmetre la configuració del protocol explicada en la secció \ref{sec:configuracio-recsi}.
 \end{itemize}
 \subsection{Característiques tècniques}
-La simulació del projecte s'ha implementat utilitzant \texttt{\java} i \texttt{\mavenLarge} per la gestió de paquets. La inclinació per utilitzar \texttt{\java} és degut a la llibreria \ciglib creada per Víctor Mateu, que recopila implementacions tant de sistemes criptogràfic com de funcions hash, entre altres. D'aquesta forma, s'intenta assolir el màxim els requisits detallats anteriorment.
+La simulació del projecte s'ha implementat utilitzant \texttt{\java} i \texttt{\mavenLarge} per la gestió de paquets. Per tal d'executar el projecte, es recomana usar la comanda explícita de \maven:
+\begin{verbatim}
+mvn exec:java -D exec.mainClass=<main-class>
+\end{verbatim}
+La classe serà aquella qui tindrà el mètode estàtic \texttt{main}, com per exemple:
+\begin{verbatim}
+	mvn exec:java -D exec.mainClass=cat.udl.cig.sms.main.NeighborhoodSimulation
+\end{verbatim}
+Pel que fa els tests, la comanda per executar-los és:
+\begin{verbatim}
+mvn test
+\end{verbatim}
+La inclinació per utilitzar \texttt{\java} és degut a la llibreria \ciglib creada per Víctor Mateu, que recopila implementacions tant de sistemes criptogràfic com de funcions hash, entre altres. D'aquesta forma, s'intenta assolir el màxim els requisits detallats anteriorment. La implementació del projecte es troba en un repositori remot a GitHub \cite{smart}.
 \\
 \\
 A l'utilitzar \maven per la gestió de paquets i dependència, s'ha canviat la estructura de la llibreria i s'ha pujat a un repositori remot \cite{ciglib}. Per instal·lar-la només cal configurar el servidor de \texttt{GitHub} a \maven i cridar la dependència des de la configuració del projecte.
@@ -59,6 +71,7 @@ La configuració del sistema i de cada entitat (sigui comptador o subestació ) 
 		\caption{Classe \texttt{CurveConfiguration}}
 		\label{fig:curve}
 	\end{figure}
+	Com es pot veure a la \textit{Figura \ref{fig:curve}}, s'ha creat un mètode estàtic per retornar la configuració de la corba \texttt{P192} de \texttt{NIST}, la qual és usada per tests i per l'anàlisis de costos.
 	\item Fitxer de configuració de xarxa, on vindrà donada la direcció $ip$ del servidor i el seu port on escoltarà. D'aquesta manera, la subestació, donada aquesta configuració crearà un \texttt{ServerSocket} per escoltar en el port i cada comptador crearà un \texttt{Socket} que estarà enllaçat al socket del servidor. S'ha creat mètodes estàtics en la classe \texttt{SocketReader} que realitzaran la lectura del fitxer de configuració i crearan el socket que faci falta.
 	\begin{figure}[H]
 		\centering
@@ -77,19 +90,22 @@ En \texttt{connection} trobem 3 interfícies que representen les diferents respo
 \end{itemize}
 La implementació d'aquestes interfícies s'ha realitzat usant les classes \texttt{Socket} i \texttt{ServerSocket} de \texttt{java.net} pels comptadors i la subestació respectivament.
 \begin{figure}[H]
-	\includegraphics[width=15cm]{classes/connection.png}
+	\centering
+	\includegraphics[width=16cm]{classes/connection.png}
 	\caption{Diagrama de classe del paquet connection}
 	\label{fig:connection}
 \end{figure}
 \subsubsection{Data Transfer Objects}
 Al haver de realitzar enviaments amb diferent contingut, s'han creat 5 datagrames, tal i com es pot observar a la \textit{Figura \ref{fig:dto}}. En cada una de les classes s'ha usat el patró \textit{factory method}, creant la interfície \texttt{SMSDatagram}, per serialitzar-los a la nostra manera.
 \begin{figure}[H]
-	\includegraphics[width=15cm]{classes/dto.png}
+	\centering
+	\includegraphics[width=16cm]{classes/dto.png}
 	\caption{Diagrama de classe dels DTO}
 	\label{fig:dto}
 \end{figure}
 A més a més, en algun moment voldrem desserialitzar-los, és a dir, donat un vector de bytes, obtenir un objecte de la classe \texttt{SMSDatagram}. Com que \texttt{\java } no soporta interfícies o classes abstractes amb mètodes estàtics per definir, s'ha creat una altra interfície anomenada \texttt{SMSDatagramSerializer} amb el mètode \texttt{fromBytes} les implementacions la qual retornaran un \texttt{SMSDatagram}. Amb l'objectiu de saber quin serialitzador usar en cada cas només sabent l'array de bytes, s'ha creat la classe \texttt{SerializerRepository}, un \textit{singleton} que contindrà totes les serialitzacions i, usant el mètode \texttt{buildDatagramFromInput} retornarà el datagrama que correspongui.
 \begin{figure}[H]
+	\centering
 	\includegraphics[width=16cm]{classes/dtoser.png}
 	\caption{Diagrama de classe dels serialitzadors de DTO}
 	\label{fig:dtoser}
@@ -97,13 +113,13 @@ A més a més, en algun moment voldrem desserialitzar-los, és a dir, donat un v
 
 
 \subsection{Criptografia}
-A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi més obert possible per a possibles futurs canvis. Per exemple, en el cas de voler usar un altre criptosistema homomòrfic per passar les claus de manera xifrada, només caldria que aquest heretés de \texttt{HomomorphicCypher} a $DecryptChunk$. 
-%A fi de realitzar-ho, s'han usat les interfícies les implementacions les quals aporten la lògica de xifrar i desxifrar.
-\subsubsection{CigLib}
-
-\subsubsection{Integració al projecte}
- Per tal d'habilitar altres criptosistemes que no siguin ElGamal, s'ha usat el patró \texttt{strategy} i d'aquesta manera, només caldrar implementar una nova classe i passar-li pel constructor el nou criptosistema per modificar el comportament.
-%TODO S'ha de fer
+A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi més obert possible per a possibles futurs canvis. Per exemple, en el cas de voler usar un altre criptosistema homomòrfic per passar les claus de manera xifrada, només caldria que aquest heretés de \texttt{HomomorphicCypher} i usar-lo en \texttt{DecryptChunk}. Un altre cas interessant és també mantenir el més obert a extensions l'algoritme per calcular el logaritme discret, on només s'hauria de crear una classe de \texttt{LogarithmAlgorithm}. Tal i com es pot veure a la \textit{Figura \ref{fig:logarithm}}, a la llibreria \cite{ciglib} s'ha implementat tres classes que hereden d'ella, entre elles, \textit{Pollard's Lambda}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{classes/log.png}
+	\caption{Diagrama de classe LogarithmAlgorithm}
+	\label{fig:logarithm}
+\end{figure}
 \subsection{Patró Màquina-Estat}
 Per tal de crear una lectura entenedora dins de la complexitat del protocol, es va pensar en implementar-lo utilitzant el patró de disseny \texttt{Màquina-Estat}. L'avantatge d'utilitzar aquesta arquitectura de disseny davant de les altres és l'analogia que comparteix amb diagrames de flux o d'estat, cosa que permet implementar algoritmes complexos de manera més senzilla. \texttt{Màquina-Estat} resumeix tota la lògica relativa als estats i a les transicions, és a dir, ens podrem estalviar condicionals i problemes de complexitat de lectura en el codi.
 \\
@@ -111,9 +127,45 @@ Per tal de crear una lectura entenedora dins de la complexitat del protocol, es 
 Aquest patró consisteix en tenir una interfície \textit{Estat} amb el mètode \textit{next}, que retornarà el nou \textit{Estat} donat el context de l'aplicació. És important tenir en consideració que el treball a realitzar dels comptadors i de la subestació serà diferent i, per tant, la implementació dels estats no es compartirà. D'aquesta manera, el punt o estat del programa estarà determinat pels tipus d'\textit{Estat} que estan la subestació com els comptadors en aquell moment. Gràcies a això, creant unes validacions i precondicions adequades, la màquina d’estat impedeix operacions fora del nostre entorn.
 \\
 \\
-No obstant això, aquest tipus d'arquitectura també té inconvenients. Un d'ells és que la seva rigidesa impedeix crear una bona estructura per projectes que necessiten molta asincronia. Per sort, el nostre protocol es el suficientment rígid per no permetre accions d'asincronia, és més, l'implementació es quedarà beneficiada d'aquesta rigidesa.
-\subsubsection{Implementació en RECSI i Busom}
-En \texttt{recsi}, el context ve donat per les classes \texttt{SubstationContext} i \texttt{MeterContext}, on hi haurà la configuració i les dependències relatives a la connexió.
-\\
-\\
+No obstant això, aquest tipus d'arquitectura també té inconvenients. Un d'ells és que la seva rigidesa impedeix crear una bona estructura per projectes que necessiten molta asincronia. Per sort, el nostre protocol és el suficientment rígid per no permetre accions d'asincronia, és més, l'implementació es quedarà beneficiada d'aquesta rigidesa. Com que els comptadors hauran d'anar sincronitzats en cada ronda, la subestació no haurà de tenir diferents estats segons l'estat de cada comptador ni la seva informació específica referent a això, sinó que es relaxarà el problema tenint un estat global relacionat a tots els comptadors.
+\subsubsection{Implementació en recsi}
+Tant la subestació com els comptadors comparteixen el nombre d'estats del protocol, que corresponen a la fase d'establiment de claus i configuració i la fase de la transmissió del consum, tal i com es pot veure a la \textit{Figura \ref{fig:recsi-state}}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=7cm]{classes/recsistate.png}
+	\caption{Màquina d'estats del protocol \cite{recsi}}
+	\label{fig:recsi-state}
+\end{figure}
+En relació a la implementació, en el paquet \texttt{recsi}, es troben dos interfícies:
+\begin{itemize}
+	\item \texttt{SubstationStateContextInt}, que es responsabilitza de començar la coumicació i l'establiment de claus i realitzar la transferència de les lectures de manera segura i agregada.
+	\item \texttt{State}, on cada extensió es responsabilitzarà de cada acció que ha de fer en el pas que toqui.
+\end{itemize}
+A la \textit{Figura \ref{fig:recsi}} es troben dos implementacions de \texttt{State} que corresponen a les dos fases del protocol respectivament. A més a més, es pot veure que \texttt{SubstationStateContext} conté tant la configuració de la corba, la connexió com el possible missatge rebut que correspondrà a la última transmissió de les lectures. Addicionalment, aquesta classe serà la qui instanciarà els estats. Per això mateix, els estats necessiten tenir la referència del context i \texttt{State} i \texttt{SubstationStateContext} tenen una relació de composició. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{classes/recsi.png}
+	\caption{Diagrama de classe dels estats de la subestació}
+	\label{fig:recsi}
+\end{figure}
+\subsubsection{Implementació en busom}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{classes/busomprot.png}
+	\caption{Diagrama de classe dels estats de la subestació}
+	\label{fig:diss-busom}
+\end{figure}
+La implementació del protocol de \cite{busom} segueix un disseny molt semblant, creant un context per tal de guardar l'estat en cada moment del protocol. A més a més, per tal deixar obert a possibles noves implementacions o variants del protocol de comunicació de configuració s'han creat les interfícies \texttt{MeterBusomServiceInt} i \texttt{SubstationBusomServiceInt}, les implementacions les quals es responsabilitzen de cridar la implementació del protocol i d'enviar i de rebre la clau privada respectivament.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=7cm]{classes/busomstatemeter.png}
+	\caption{Màquina d'estats del protocol \cite{busom}}
+	\label{fig:busom-state}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=10cm]{classes/busomstatesub.png}
+	\caption{Màquina d'estats del protocol \cite{busom}}
+	\label{fig:busom-state-sub}
+\end{figure}
 \end{document}

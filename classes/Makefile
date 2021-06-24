@@ -5,8 +5,14 @@ CONNECTION = connection
 DTOSER = dtoser
 CURVE = curve
 SOCKET = socket
+LOG = log
+RECSI = recsi
+BUSOMPROT = busomprot
+RECSISTATE = recsistate
+BUSOMSTATEMETER = busomstatemeter
+BUSOMSTATESUB = busomstatesub
 
-all: $(CRIPTO) $(DTO) $(STATEMACHINE) $(CONNECTION) $(DTOSER) $(CURVE) $(SOCKET)
+all: $(CRIPTO) $(DTO) $(STATEMACHINE) $(CONNECTION) $(DTOSER) $(CURVE) $(SOCKET) $(LOG) $(BUSOMPROT)
 	@echo "DONE"
 
 $(CRIPTO):
@@ -29,3 +35,22 @@ $(CURVE):
 	
 $(SOCKET):
 	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(SOCKET).puml
+
+$(LOG):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(LOG).puml
+
+$(RECSI):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(RECSI).puml
+
+$(BUSOMPROT):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(BUSOMPROT).puml
+
+$(RECSISTATE):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(RECSISTATE).puml
+
+$(BUSOMSTATEMETER):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(BUSOMSTATEMETER).puml
+
+$(BUSOMSTATESUB):
+	java -jar plantuml.jar jlatexmath-minimal-1.0.3.jar jlm_cyrillic.jar jlm_greek.jar $(BUSOMSTATESUB).puml
+

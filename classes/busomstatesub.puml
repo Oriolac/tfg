@@ -1,0 +1,12 @@
+@startuml busomstatesub
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+[*] --> BusomSubstationSetUp : Start
+BusomSubstationSetUp --> ReceiveChunk : Public key generated
+ReceiveChunk : Receive the ciphertexts and aggregates them all
+ReceiveChunk --> DecryptChunk : Aggregated ciphertext is computed
+DecryptChunk : Receive the smart meter computation and do the discrete logarithm
+DecryptChunk --> BusomSubstationSetUp : Error
+DecryptChunk --> ReceiveChunk : There must be more chunks
+DecryptChunk --> [*] : There are no more chunks to aggregate
+@enduml
