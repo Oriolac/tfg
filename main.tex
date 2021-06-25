@@ -237,7 +237,7 @@ Sabent el valor de $a$ i $g$ és computacionalment costós\footnote{És computac
 
 %Tot i que el problema de la descomposició en factors primers i el del logaritme discret són problemes diferents, en cap dels dos es coneix un algorisme eficient si no és realitzat per un ordinador quàntic. Els dos problemes estan catalogats actualment com problemes \textit{NP}  però no estan considerats \textit{NP-Complets} perquè no s'ha trobat una forma de reduir aquests problemes a un problema NP-Complet en temps polinomial.
 Encara no s'ha trobat cap algorisme eficient que resolgui el problema del logaritme discret en temps polinomial, per això, actualment pertany al conjunt de problemes \textit{NP}. No obstant això, no està considerat \textit{NP-Complet} ja que no s'ha trobat una forma de reduir aquest problema a un que ja sigui \textit{NP-Complet} en temps polinomial.
-\subsection{Pollard's Lambda}
+\subsection{Pollard's Lambda}\label{sec:pollards}
 J. M. Pollard \cite{pollard} va descriure dos algoritmes per resoldre el logaritme discret: el mètode \textit{Rho} i el mètode \textit{Lambda} o també anomenat \textit{Kangaroo} \cite{kangaroo}. El mètode \textit{Lambda } relaxa una mica el problema, ja que, donat el grup cíclic $G$, es pretén resoldre el logaritme donat un interval entre uns llindars:
 \[g^k = a, \quad L \le k \le U\]
 Per tal de resoldre-ho, es creen dos seqüències que, al trobar-se en un punt vol dir que s'ha trobat la potència que s'està buscant. El perquè del nom d'aquest mètode esdevé d'una metàfora, que rau en dos cangurs (les seqüències), un mans i l'altre salvatge. Aquests es situen en un punt que sabem i en un que no, que serà el que voldrem saber, respectivament. Quan vagin saltant i es trobin, sabent el comportament del salvatge podrem veure a quin punt estava situat al principi.
@@ -330,7 +330,7 @@ sent $\lambda$:
 	\end{array}
 	\right.
 \end{equation*}
-Com es pot veure, el resultat de la suma de dos punts $P, Q$ pertanyents a $E(\mathbb{F})$ és un altre punt $R \in E(\mathbb{F})$. Sabent això, podem veure que si es suma 	un punt $G \in E(\mathbb{F})$ a ell mateix tenim $G + G = 2 \cdot G$. Si li tornem a sumar el mateix punt tenim $2 \cdot G + G = 3 \cdot G$. De manera general, podem veure que multiplicar un punt de la corba per un enter $k$ ens retornarà un nou punt de la corba\footnote{En el cas que $k=0$, el resultat sempre serà $\mathcal{O}$}:
+Com es pot veure, el resultat de la suma de dos punts $P, Q$ pertanyents a $E(\mathbb{F})$ és un altre punt $R \in E(\mathbb{F})$. Sabent això, podem veure que si es suma 	un punt $G \in E(\mathbb{F})$ a ell mateix tenim $G + G = 2 \cdot G$. Si li tornem a sumar el mateix punt tenim $2 \cdot G + G = 3 \cdot G$. De manera general, podem veure que multiplicar un punt de la corba per un enter $k$ ens retornarà un nou punt de la corba\footnote{En el cas que $k=0$, el resultat sempre serà $\mathcal{O}$.}:
 \[P = k \cdot G\]
 En \textit{ECC} es defineix un punt $G$ anomenat generador, que podrà generar qualsevol altre punt del seu subgrup de la corba multiplicant-se per algun enter $k \in [0, p]$ on $p$ és l'ordre del subgrup.
 El cofactor ens determina el nombre de subgrups de la corba, en cas que sigui $1$, tots els punts de la corba es poden generar pel punt $G$, ja que l'ordre de la corba i el del subgrup tenen el mateix valor. Normalment, es busquen subgrups l'ordre del qual sigui un nombre primer, ja que, en cas contrari, cada un dels factors de l'ordre multiplicat per qualsevol punt $Q \in E(\mathbb{F})$, donarà infinit.

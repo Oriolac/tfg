@@ -71,7 +71,7 @@ La configuració del sistema i de cada entitat (sigui comptador o subestació ) 
 		\caption{Classe \texttt{CurveConfiguration}}
 		\label{fig:curve}
 	\end{figure}
-	Com es pot veure a la \textit{Figura \ref{fig:curve}}, s'ha creat un mètode estàtic per retornar la configuració de la corba \texttt{P192} de \texttt{NIST}, la qual és usada per tests i per l'anàlisis de costos.
+	Com es pot veure a la \textit{Figura \ref{fig:curve}}, s'ha creat un mètode estàtic per retornar la configuració de la corba \texttt{P192} de \texttt{NIST} \cite{p192}, la qual és usada per tests i per l'anàlisis de costos.
 	\item Fitxer de configuració de xarxa, on vindrà donada la direcció $ip$ del servidor i el seu port on escoltarà. D'aquesta manera, la subestació, donada aquesta configuració crearà un \texttt{ServerSocket} per escoltar en el port i cada comptador crearà un \texttt{Socket} que estarà enllaçat al socket del servidor. S'ha creat mètodes estàtics en la classe \texttt{SocketReader} que realitzaran la lectura del fitxer de configuració i crearan el socket que faci falta.
 	\begin{figure}[H]
 		\centering
@@ -82,13 +82,14 @@ La configuració del sistema i de cada entitat (sigui comptador o subestació ) 
 	
 \end{itemize}
 \subsection{Connexió}
-En \texttt{connection} trobem 3 interfícies que representen les diferents responsabilitats del paquet:
+Com que els comptadors i les subestacions no tenen el mateix comportament pel que fa a la connexió, en \texttt{connection} trobem 3 interfícies que representen les diferents responsabilitats del paquet:
 \begin{itemize}
 	\item \texttt{ReceiverMeter }s'encarrega de rebre el \dto de la subestació.
 	\item \texttt{ReceiverSubestation }rebrà tots els \dto dels comptadors.
-	\item \texttt{Sender }només s'encarregarà d'enviar \dto ja sigui de part d'un comptador o de la subestació.
+	\item \texttt{Sender} només s'encarregarà d'enviar \dto ja sigui de part d'un comptador o de la subestació.
 \end{itemize}
-La implementació d'aquestes interfícies s'ha realitzat usant les classes \texttt{Socket} i \texttt{ServerSocket} de \texttt{java.net} pels comptadors i la subestació respectivament.
+Aquestes interfícies corresponen, en un cert grau, a l'arquitectura de client servidor, per aquest motiu, la forma més fàcil d'implementar la lògica era creant un servidor per la subestació i un client pel comptador.
+La implementació s'ha realitzat usant les classes \texttt{Socket} i \texttt{ServerSocket} de \texttt{java.net} pels comptadors i la subestació respectivament.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=16cm]{classes/connection.png}
@@ -149,16 +150,17 @@ A la \textit{Figura \ref{fig:recsi}} es troben dos implementacions de \texttt{St
 	\label{fig:recsi}
 \end{figure}
 \subsubsection{Implementació en busom}
+La implementació del protocol de \cite{busom} segueix un disseny molt semblant, creant un context per tal de guardar l'estat en cada moment del protocol. A més a més, per tal deixar obert a possibles noves implementacions o variants del protocol de comunicació de configuració s'han creat les interfícies \texttt{MeterBusomServiceInt} i \texttt{SubstationBusomServiceInt}, les implementacions les quals es responsabilitzen de cridar la implementació del protocol i d'enviar la clau privada en divisions, en el cas dels comptadors, i de computar la clau privada, en el cas de la subestació. El nombre de paquets a transmetre estan en la configuració de \texttt{KeyEstablishmentMeter} en el cas dels comptadors, ja que és responsabilitat de \cite{recsi} dividir la clau privada en \textit{chunks}, i \texttt{SubstationBusomService} en el cas de la subestació, ja que és el servei el qui ha de control·lar la transmissió \cite{busom}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=14cm]{classes/busomprot.png}
 	\caption{Diagrama de classe dels estats de la subestació}
 	\label{fig:diss-busom}
 \end{figure}
-La implementació del protocol de \cite{busom} segueix un disseny molt semblant, creant un context per tal de guardar l'estat en cada moment del protocol. A més a més, per tal deixar obert a possibles noves implementacions o variants del protocol de comunicació de configuració s'han creat les interfícies \texttt{MeterBusomServiceInt} i \texttt{SubstationBusomServiceInt}, les implementacions les quals es responsabilitzen de cridar la implementació del protocol i d'enviar i de rebre la clau privada respectivament.
+Com es pot veure a les \textit{Figures \ref{fig:busom-state}} i  \textit{\ref{fig:busom-state-sub}}, a la màquina d'estats del comptador se li ha afegit un estat de més, aquest sent \textit{BusomSetUp}, on només genera la clau privada. Es podria prescindir d'aquesta deicisió d'implementació i afegir-ho en la responsabilitat de \textit{NeighborhoodSetUp}, però es va creure oportú fer-ho així per tenir les tasques el més dividides i estructurades possibles.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=7cm]{classes/busomstatemeter.png}
+	\includegraphics[width=6.5cm]{classes/busomstatemeter.png}
 	\caption{Màquina d'estats del protocol \cite{busom}}
 	\label{fig:busom-state}
 \end{figure}
