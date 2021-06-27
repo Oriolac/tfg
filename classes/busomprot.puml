@@ -19,19 +19,19 @@ interface MeterBusomContextInt {
     + void sendPartialDecryption()
 }
 class MeterBusomContext implements MeterBusomContextInt {
-    - BusomState state;
+    - MeterBusomState state;
 }
-interface BusomState {
+interface MeterBusomState {
     BusomState next()
 }
-class BusomSetUp implements BusomState {
+class BusomSetUp implements MeterBusomState {
 }
-class NeighborhoodSetUp implements BusomState {
+class NeighborhoodSetUp implements MeterBusomState {
 }
-class SendChunk implements BusomState {
+class SendChunk implements MeterBusomState {
 
 }
-class SendPartialDecryption implements BusomState {
+class SendPartialDecryption implements MeterBusomState {
 
 }
 

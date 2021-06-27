@@ -18,6 +18,9 @@ class CipherTextDatagramSerializer {
 class EndOfDatagramSerializer {
     
 }
+class KeyRenewalSerializer {
+    
+}
 class GroupElementDatagramSerializer {
     - int LENGTH_CURVE
     - {static} int NUM_RING_ELEMENTS
@@ -44,6 +47,7 @@ SMSDatagramSerializer <|.. CipherTextDatagramSerializer
 SMSDatagramSerializer <|.. EndOfDatagramSerializer
 SMSDatagramSerializer <|.. GroupElementDatagramSerializer
 SMSDatagramSerializer <|.. NeighborhoodDatagramSerializer
+SMSDatagramSerializer <|.. KeyRenewalSerializer
 SMSDatagramSerializer *-- SerializerRepository
 }
 @enduml

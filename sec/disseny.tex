@@ -121,6 +121,7 @@ A l'hora de fer una primera iteració sobre el projecte, es va veure clar crear 
 	\caption{Diagrama de classe LogarithmAlgorithm}
 	\label{fig:logarithm}
 \end{figure}
+A l'hora de crear \texttt{PollardsLambda}, es va solventar un error que no permetia crear una funció \textit{Hash} correctament, a causa de com estava implementat el mètode \texttt{hashcode} de la classe \texttt{GroupElement} de \cite{ciglib}. Per tal d'avançar la implementació, es va crear l'algoritme \texttt{BruteForce} per usar-lo en els tests i en fases més inicials del projecte, quan encara no estava implementat el \texttt{PollardsLambda}. Més endavant, es va idear \texttt{HashedAlgorithm}. Aquesta classe està dissenyada com un \texttt{Singleton}, on primer es realitza un algoritme de força bruta per guardar tots els valors del logaritme discret de qualsevol element. D'aquesta manera, el mètode solament haurà d'accedir a memòria i serà l'únic cost. Al igual que \texttt{PollardsLambda}, aquest mètode depèn del \texttt{hashcode} de \texttt{GroupElement}, per tant, es necessitava tenir solventat l'error també per aquesta implementació. A causa d'això, es va realitzar una correcció general per totes les classes de \cite{ciglib}.
 \subsection{Patró Màquina-Estat}
 Per tal de crear una lectura entenedora dins de la complexitat del protocol, es va pensar en implementar-lo utilitzant el patró de disseny \texttt{Màquina-Estat}. L'avantatge d'utilitzar aquesta arquitectura de disseny davant de les altres és l'analogia que comparteix amb diagrames de flux o d'estat, cosa que permet implementar algoritmes complexos de manera més senzilla. \texttt{Màquina-Estat} resumeix tota la lògica relativa als estats i a les transicions, és a dir, ens podrem estalviar condicionals i problemes de complexitat de lectura en el codi.
 \\
@@ -151,13 +152,21 @@ A la \textit{Figura \ref{fig:recsi}} es troben dos implementacions de \texttt{St
 \end{figure}
 \subsubsection{Implementació en busom}
 La implementació del protocol de \cite{busom} segueix un disseny molt semblant, creant un context per tal de guardar l'estat en cada moment del protocol. A més a més, per tal deixar obert a possibles noves implementacions o variants del protocol de comunicació de configuració s'han creat les interfícies \texttt{MeterBusomServiceInt} i \texttt{SubstationBusomServiceInt}, les implementacions les quals es responsabilitzen de cridar la implementació del protocol i d'enviar la clau privada en divisions, en el cas dels comptadors, i de computar la clau privada, en el cas de la subestació. El nombre de paquets a transmetre estan en la configuració de \texttt{KeyEstablishmentMeter} en el cas dels comptadors, ja que és responsabilitat de \cite{recsi} dividir la clau privada en \textit{chunks}, i \texttt{SubstationBusomService} en el cas de la subestació, ja que és el servei el qui ha de control·lar la transmissió \cite{busom}.
+\\
+\\
+Cal esmentar que existeixen mètodes \texttt{protected} en la implementació del protocol que no apareixen a la \textit{Figura \ref{fig:diss-busom}}, ja que aquests només són usats i han de ser usats en tests.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=14cm]{classes/busomprot.png}
 	\caption{Diagrama de classe dels estats de la subestació}
 	\label{fig:diss-busom}
 \end{figure}
-Com es pot veure a les \textit{Figures \ref{fig:busom-state}} i  \textit{\ref{fig:busom-state-sub}}, a la màquina d'estats del comptador se li ha afegit un estat de més, aquest sent \textit{BusomSetUp}, on només genera la clau privada. Es podria prescindir d'aquesta deicisió d'implementació i afegir-ho en la responsabilitat de \textit{NeighborhoodSetUp}, però es va creure oportú fer-ho així per tenir les tasques el més dividides i estructurades possibles.
+Com es pot veure a les \textit{Figures \ref{fig:busom-state}} i  \textit{\ref{fig:busom-state-sub}}, a la màquina d'estats del comptador se li ha afegit un estat de més, aquest sent \textit{BusomSetUp}, on només genera la clau privada. Es podria prescindir d'aquesta deicisió d'implementació i afegir-ho en la responsabilitat de \textit{NeighborhoodSetUp}, però es va creure oportú fer-ho així per dos motius:
+\begin{itemize}
+	\item tenir les tasques el més dividides i estructurades possibles. 
+	\item poder prescindir de la sincronia amb la subestació per tal de realitzar tasques no que requerissin una comunicació, com és el cas de la generació de la clau privada de cada comptador.
+\end{itemize}
+Amb la intenció de tractar i veure què es considera error i què es una clau de renovació, s'ha creat la excepció \texttt{KeyRenewalException}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=6.5cm]{classes/busomstatemeter.png}

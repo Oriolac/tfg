@@ -4,18 +4,19 @@ skinparam backgroundColor #FFFFFF
 namespace cat.udl.cig.sms.connection.datagram {
 interface SMSDatagram
 
+class GroupElementDatagram
+class NeighborhoodDatagram<T>
+class KeyRenewalDatagram
 class BigIntegerDatagram
 class CipherTextDatagram
 class EndOfDatagram
-class GroupElementDatagram
-class NeighborhoodDatagram<T>
-
 
 SMSDatagram <|.. BigIntegerDatagram
 SMSDatagram <|.. CipherTextDatagram
 SMSDatagram <|.. EndOfDatagram
 SMSDatagram <|.. GroupElementDatagram
 SMSDatagram <|.. NeighborhoodDatagram
+SMSDatagram <|.. KeyRenewalDatagram
 BigIntegerDatagram : BigInteger bigInteger
 CipherTextDatagram : HomomorphicCipherText ciphertext
 GroupElementDatagram : GroupElement groupElement
