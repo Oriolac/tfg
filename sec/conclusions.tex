@@ -1,0 +1,21 @@
+\begin{document}
+Un cop s'ha realitzat l'anàlisi de costos i s'han observat els seus resultats, es pot concloure que, en comparació amb \cite{busom}, \cite{recsi} funciona més bé en comunitats més grans, en entorns on la velocitat de xarxa sigui baixa i quan la fase de transmissió de lectures sigui d'una durada llarga en el temps. En canvi, \cite{busom} té una fase de configuració de claus més senzilla, cosa que pot ser beneficiós en sistemes on no hi hagi moltes dades a enviar. No obstant hi hagi aquestes diferències i, encara que \cite{recsi} hagi d'usar el càlcul del logaritme discret a les dos fases del protocol, el cost i l'eficiència dels dos sistemes és molt semblant.
+\\
+\\
+En relació amb els diferents algoritmes per realitzar el logaritme discret, s'ha vist que si l'ordinador té prou memòria i si la situació permet tenir un temps per \textit{carregar} l'algoritme, resulta interessant usar \texttt{HashedAlgorithm}, ja que el cost de realitzar el logaritme discret és constant, ja que està guardat a memòria. No obstant això, usar \texttt{PollardsLambda} és una opció molt bona a considerar, ja que, encara que el seu cost és exponencial, l'espai que necessita a memòria és pràcticament negligible i no hi ha una necessitat en carregar les dades a l'inici del programa.
+\\
+\\
+Pel que fa als continguts i l'aprenentatge acadèmic, durant el projecte, s'ha pogut treballar i entendre com funciona el xifratge homomòrfic, a més de treballar en dues aplicacions directes usant un criptosistema asimètric amb criptografia de corba el·líptica, cosa que permet tenir una visió més àmplia dels continguts impartits en les classes. S'ha endinsat més en el món de la criptografia i la computació treballant en diverses eines de computació com pot ser l'algoritme \cite{kangaroo} o l'establiment de claus \cite{diffie-hellman}.
+\\
+\\
+Pel que fa a l'aprenentatge en la part pràctica, s'ha pogut decidir diferents patrons de disseny a l'hora de realitzar la implementació i raonar sobre l'arquitectura que havia de tenir el projecte. A més a més, entre altres aspectes tècnics, s'ha tingut l'oportunitat d'usar \texttt{Maven} per la gestió de paquets i pujar repositoris remots com conèixer nous \textit{frameworks} com \texttt{Mockito} per la realització de tests unitaris a més a més de la experiència adquirida en el tractament de les dades.
+\newpage
+Per acabar, un cop realitzat l'anàlisi i conclusió global del projecte, m'agradaria veure perspectives de futur i marcar possibles noves direccions les quals es pot encarar un treball futur:
+\begin{itemize}
+	\item Seguint la línea del treball, seria interessant realitzar un segon anàlisi dels protocols incloent aquesta vegada \cite{repair-busom}. D'aquesta forma, comprovar que aquest no és tan eficient degut al nou pas creat per verificar la seguretat de les lectures dels comptadors en la fase de transmissió.
+	\item Crear l'anàlisis usant diversos ordenadors, de manera que cada comptador i la subestació siguin un ordenador diferent, amb l'objectiu de realitzar una simulació més realista.
+	\item Aprendre nous protocols i aprofitar el codi de l'aplicació per realitzar un anàlisi entre altres protocols i veure el seu rendiment.
+	\item Fer una altra revisió estructural i de disseny de de \texttt{CigLib} per tal que la llibreria agafi més flexibilitat i sigui més obert a noves funcionalitats.
+	\item Aprendre computació quàntica i usar una llibreria per tal de veure si el protocol actual pot tenir algun defecte de seguretat o possible vulnerabilitat en la transmissió de claus o lectures.
+\end{itemize}
+\end{document}

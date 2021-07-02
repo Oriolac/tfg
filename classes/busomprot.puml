@@ -11,7 +11,7 @@ class MeterBusomService implements MeterBusomServiceInt {
     - void meterSetUp()
 }
 MeterBusomService -- MeterBusomContextInt
-BusomState "1" *-- "1" MeterBusomContext
+MeterBusomState "1" *-- "1" MeterBusomContext
 interface MeterBusomContextInt {
     + void generatePrivateKey()
     + void setUpNeighborHood()
