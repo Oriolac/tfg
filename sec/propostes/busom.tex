@@ -20,7 +20,6 @@ Al ser un protocol de tipus agregatiu utilitzant el sistema criptogràfic ElGama
 Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman usant la operació de multiplicació per tal de rebre una clau pública $y$ tal que $y=g^{\sum_{i=1}^{n} x_i}$, sent $x_i$ la clau privada del comptador $M_i$. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. 
 \\
 \\
-\\
 Cada comptador té la seva clau secreta\footnote{La clau secreta és creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fa públic $y_i = g^{x_i}$ juntament amb una prova zero-knowledge\footnote{Protocol que estableix un mètode per comprovar quelcom sense haver de revelar la veracitat de la declaració. En aquest cas, s'ha de comprovar que el comptador forma part del conjunt o barri.} sobre $log_g(y_i)$, on cada comptador demostra que coneix el seu valor secret $x_i$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
 \\
 \\
@@ -35,10 +34,11 @@ No obstant s'ha establert una clau per tal de xifrar els consums, encara no s'ha
 	
 	\[C = (\prod_{i=1}^{n} c_i, \ \prod_{i=1}^{n} d_i) = (g^r, \ y^r \cdot g ^{\sum_{i=1}^{n} m_i} \cdot g^z) = (g^r, \ y^r \cdot g^m \cdot g^z ) =  (c, d)\]
 	\[m = \sum_{i=1}^{n} m_i\]
-	i envia $C$ a tots els comptadors del seu barri.\label{en:busom-s1}
-	\item Cada comptador, al rebre $C$, computa:
+	i envia $c$, el primer component de la tupla, a tots els comptadors del seu barri. Recordem que $c$ és la \textit{pista} del xifrat en \textit{ElGamal}.
+	\label{en:busom-s1}
+	\item Cada comptador, al rebre $c$, computa:
 	\[T_i = c^{x_i} g^{z_i}\]
-	i envia el seu resultat a la subestació. Després d'això, el comptador ja no necessita $z_i$ i pot esborrar-lo de la memòria. Aquest pas és necessari per tal que la subestació pugui eliminar el factor aleatori $r$ del missatge xifrat.\label{en:busom-m1}
+	i envia el seu resultat a la subestació. Després d'això, el comptador ja no necessita $z_i$ i pot esborrar-lo de la memòria. Aquest pas és necessari per tal que la subestació pugui eliminar $y^r$ i $g^z$ del missatge xifrat $C$.\label{en:busom-m1}
 	\item Un cop la subestació ha rebut tots els $T_i$ de cada comptador, calcula:
 	\[D = d \cdot (\prod_{i=1}^{n} T_i)^{-1} = g^m, \qquad \prod_{i=1}^{n} T_i = (g^{r})^x \cdot g^z = y^r \cdot g^z\]
 	D'aquesta manera, la subestació troba el valor agregat sense el valor aleatori de cada comptador ni el factor aleatori d'usar \textit{ElGamal}.
@@ -101,6 +101,7 @@ Aquest atac es pot realitzar de manera distribuïda en tots els comptadors intel
 	\caption{Diagrama de seqüència de la solució proposada en el problema de la privacitat de Busom}
 	\label{fig:garra}
 \end{figure}
+\newpage
 Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{repair-busom} es proposa una modificació del protocol per a que al final de cada ronda, la subestació hagi d'estar forçada a enviar als comptadors una prova de que s'ha executat el protocol de manera correcta. El diagrama de seqüència d'aquest nou sistema es troba la \cref{fig:garra}. En cas de no superar la prova, els comptadors requeriran tornar a realitzar una nova configuració de claus. En el procediment s'afegeix:
 \begin{enumerate}
 	\item En la \textit{configuració del sistema}, s'afegirà del original:

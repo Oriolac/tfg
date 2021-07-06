@@ -85,7 +85,7 @@ El primer que es voldrà analitzar seran els diferents algoritmes implementats q
 	\[g^k = a ,\quad \textrm{ usant  }\ \mathbb{Z}_p\]
 	\[G \cdot k = A,\quad \textrm{ usant  }\ E(\mathbb{Z}_p)\]
 \end{itemize}
-L'anàlisi del protocol en funció dels algoritmes s'ha dut a terme usant un processador \texttt{AMD Ryzen 7 4800H @ 2.900GHz} de $4$ nuclis. El generador de lectures usat és el \texttt{RandomConsumption} per tenir la mateixa configuració pel que fa a la llargada dels missatges, ja sigui en \textit{KT} com \textit{CT}. A l'hora d'analitzar en funció de l'algoritme \texttt{BruteForce}, a causa del temps que requereix per realitzar el logaritme discret, només s'ha repetit el cas 20 vegades. Per aquest motiu possiblement, veiem a la \textit{Taula \ref{tab:brute}} que el temps és major a \textit{CT }que \textit{KE}, ja que no hi ha suficients dades.
+L'anàlisi del protocol en funció dels algoritmes s'ha dut a terme usant un processador \texttt{AMD Ryzen 7 4800H @ 2.900GHz} de $4$ nuclis. El generador de lectures usat és el \texttt{RandomConsumption} per tenir la mateixa configuració pel que fa a la llargada dels missatges, ja sigui en \textit{Key Establishment} com \textit{Consumption Transmission}. A l'hora d'analitzar en funció de l'algoritme \texttt{BruteForce}, a causa del temps que requereix per realitzar el logaritme discret, només s'ha repetit el cas 20 vegades. Per aquest motiu possiblement, veiem a la \textit{Taula \ref{tab:brute}} que el temps és major a \textit{Consumption Transmission} que \textit{Key Establishment}, ja que no hi ha suficients dades.
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{lrrrrr}
@@ -184,15 +184,14 @@ Encara que l'algoritme cachejat tingui un cost teòric $\mathcal{O}(1)$ a l'hora
 \end{figure}
 A més a més, és important l'ús de la memòria principal en aquest tipus d'algoritmes, ja que guardant $2^{20}$ relacions, s'ha necessitat \texttt{1 GB} en memòria.
 \section{Comparació de \cite{recsi} i \cite{busom}}
-S'ha volgut comparar el cost en temps dels protocols \cite{recsi} i \cite{busom} en funció del nombre de comptadors i de missatges. Encara que \cite{busom} té un establiment de claus més senzilla que \cite{recsi}, aquest últim té una comunicació menys costosa a la fase \textit{CT}, per aquest motiu, es pot deduir que, en el cas de tenir moltes rondes, és aconsellable usar \cite{recsi}. No obstant això, veiem a la \textit{Figura \ref{fig:prottime16}}, que en la simulació en comunitats de $16$ comptadors, no es pot apreciar una millora en \cite{recsi}. Això és degut a que la simulació s'ha realitzat en un mateix ordenador i el cost en temps del pas de lectures dels comptadors a la subestació és negligible, cosa que no es pot assumir que, en un cas real, existeixi sempre aquesta propietat.
+S'ha comparat el cost en temps dels protocols \cite{recsi} i \cite{busom} en funció del nombre de comptadors i de missatges. Encara que \cite{busom} té un establiment de claus més senzilla que \cite{recsi}, aquest últim té una comunicació menys costosa a la fase \textit{Consumption Transmission}, per aquest motiu, es pot deduir que, en el cas de tenir moltes rondes, és aconsellable usar \cite{recsi}. No obstant això, veiem a la \textit{Figura \ref{fig:prottime16}}, que en la simulació en comunitats de $16$ comptadors, no es pot apreciar una millora en \cite{recsi}. Això és a causa de que la simulació s'ha realitzat en un mateix ordenador i el cost en temps del pas de lectures dels comptadors a la subestació és negligible, cosa que no es pot assumir que, en un cas real, existeixi sempre aquesta propietat.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=9cm]{imgs/cost/16compt.png}
-	\caption{Cost experimentals dels protocols \cite{recsi} i \cite{busom} en comunitats de 16 comptadors.}
+	\caption{Costos experimentals dels protocols \cite{recsi} i \cite{busom} en comunitats de 16 comptadors.}
 	\label{fig:prottime16}
 \end{figure}
-\newpage
-Per aquest motiu, s'ha realitzat un altre anàlisi en comunitats de 32 comptadors. Així doncs, l'ordinador no pot realitzar la simulació de manera paral·lela, D'aquesta forma, privem a la subestació d'una comunicació eficient, ja que tarda més en rebre totes les lectures en una ronda. Es pot observar a la \textit{Figura \ref{fig:prottime32}} que, a mesura que el nombre de missatges augmenta, \cite{recsi} es torna més eficient, ja que la seva funció de cost té un pendent menor.
+Per aquest motiu, s'ha realitzat un altre anàlisi en comunitats de 32 comptadors. Així doncs, l'ordinador no pot realitzar la simulació de manera paral·lela. D'aquesta forma privem a la subestació d'una comunicació eficient, ja que tarda més en rebre totes les lectures en una ronda. Es pot observar a la \textit{Figura \ref{fig:prottime32}} que, a mesura que el nombre de missatges augmenta, \cite{recsi} es torna més eficient.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=9cm]{imgs/cost/32compt.png}
@@ -200,32 +199,34 @@ Per aquest motiu, s'ha realitzat un altre anàlisi en comunitats de 32 comptador
 	\label{fig:prottime32}
 \end{figure}
 
-En conclusió, es pot observar que, en el cas de tenir poques rondes en la fase \textit{CT}, \cite{busom} és una millor proposta al tenir una configuració de claus més senzilla. 
-Per altra banda, si es sap que la comunicació entre comptadors i subestació és costosa o triga massa  i es pot tenir un nombre de rondes en \textit{CT} considerable, és més aconsellable usar \cite{recsi}, perquè aquest cost es veurà menys afectat. Sigui $R$ el nombre de rondes en la fase \textit{CT}, podem dir que si la següent avaluació és certa, és millor usar \cite{busom}.
-\[Cost_2(R) \le Cost_1(R)\]
-Podem partir el cost de cada protocol en la suma de costos de les dos fases. De manera general, podem assumir que els costos de totes les fases en ambdós protocols depenen, en part, del cost de la comunicació entre comptadors i subestació.
-\[Cost_{KE_2} + Cost_{CT_2}(R) \le  Cost_{KE_1} + Cost_{CT_1}(R)\]
-La fase \textit{KE} de \cite{recsi}, a més a més, depèn del nombre de fragments de la clau privada que han d'enviar els comptadors. Aquests fragments estan determinats per l'ordre de la corba i la seva mida en bits, que està estipulat que sigui $13$ per tal de no elevar gaire el cost de realitzar el logaritme discret en cada iteració. D'aquesta manera, es pot veure que el nombre de fragments és: 
+En conclusió, es pot observar que, en el cas de tenir poques rondes en la fase \textit{Consumption Transmission}, \cite{busom} és una millor proposta al tenir una configuració de claus més senzilla. 
+Per altra banda, si es sap que la comunicació entre comptadors i subestació és costosa o triga massa  i es pot tenir un nombre de rondes en \textit{Consumption Transmission} considerable, és més aconsellable usar \cite{recsi}, perquè el cost es veurà menys afectat usant aquest sistema. Sigui $R$ el nombre de rondes en la fase \textit{Consumption Transmission}, podem dir que si la següent avaluació és certa, és millor usar \cite{busom}.
+\[Cost_2(R) < Cost_1(R)\]
+Per desenvolupar més aquesta inequació, podem partir el cost de cada protocol en la suma de costos de les seves fases.
+\[Cost_{KE_2} + Cost_{CT_2}(R) <  Cost_{KE_1} + Cost_{CT_1}(R)\]
+La fase \textit{Key Establishment} de \cite{recsi}, a més a més, depèn del nombre de fragments de la clau privada que han d'enviar els comptadors. Aquests fragments estan determinats per l'ordre de la corba i la mida en bits del que es vol transmetre, que està estipulat que sigui $13$ per tal de no elevar gaire el cost de realitzar el logaritme discret en cada iteració. D'aquesta manera, es pot veure que el nombre de fragments és: 
 \[|Fragments| = \frac{\textrm{ordre de la corba}}{\#\textrm{fragment}_2} = \frac{\textrm{ordre de la corba}}{13}\]
 Com que la fase \textit{KE} de \cite{recsi} s'usa el protocol \cite{busom}, es pot dir de manera general que:
 \[Cost_{KE_1} = Cost_2(|Fragments|)\]
 Així doncs, substituint veiem que:
-\[Cost_{KE_2} + Cost_{CT_2}(R) \le  Cost_{2}(|Fragments|) + Cost_{CT_1}(R)\]
-A més a més, sabem que, el cost de la fase de \textit{CT} de \cite{busom} és més elevat que el de \cite{recsi} gràcies al cost de comunicació. Llavors, podem assumir que hi ha una proporció entre les dues fases en funció d'aquest cost.
+\[Cost_{KE_2} + Cost_{CT_2}(R) <  Cost_{2}(|Fragments|) + Cost_{CT_1}(R)\]
+A més a més, sabem que, el cost de la fase de \textit{Consumption Transmission} de \cite{busom} és més elevat que el de \cite{recsi} per culpa del cost de comunicació. Llavors, podem assumir, simplificant una mica el problema sense tenir en compte altres possibles tipus de factors, que hi ha una proporció entre les dues fases en funció d'aquest cost.
 \[Cost_{CT_2}(R) = Cost_{CT_1}(R) \cdot k_{\textrm{comunicació}}, \qquad k_{\textrm{comunicació}} \ge 1\]
-Substituint a l'inequació veiem que:
+Substituint el cost de la fase de \textit{Consumption Transmission} de \cite{busom} en l'inequació veiem que:
 \[Cost_{KE_2} + Cost_{CT_1}(R) \cdot k_{\textrm{comunicació}} \le  Cost_{2}(|Fragments|) + Cost_{CT_1}(R)\]
-En conclusió, veiem que si $k_{\textrm{comunicació}} = 1$, és  a dir, el cost de comunicació és negligible, és millor usar \cite{busom} ja que el cost de la fase \textit{KE} és més petit que el cost del mateix protocol $Cost_{KE_2} \le Cost_{2}$. Per altra banda, si $k_{\textrm{comunicació}} > 1$, triar \cite{recsi} o \cite{busom} depèn del nombre de rondes $R$ en la fase de \textit{CT} i si $\ \ |Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})| \le Cost_{CT_2}(|Fragments|)$. En cas que sigui així, serà millor triar \cite{busom}.
-\[Cost_{KE_2} \le  Cost_{2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
-La inequació es pot simplificar encara més, partint un altre cop el cost del protocol \cite{busom}, sabent que
+Podem observar que, si $k_{\textrm{comunicació}} = 1$, és  a dir, el cost de comunicació és negligible, és millor usar \cite{busom} ja que el cost de la fase \textit{Key Establishment} és més petit que el cost del mateix protocol $Cost_{KE_2} \le Cost_{2}$. Per altra banda, si $k_{\textrm{comunicació}} > 1$, la tria depèn, bàsicament, del nombre de rondes $R$, ja que, tard o d'hora, com que la fase de \textit{Consumption Transmission} de \cite{recsi} és menys costosa que \cite{busom}, aquest primer tindrà un avantatge a partir d'un nombre determinat de rondes.
+\[Cost_{KE_2} <  Cost_{2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
+Es pot entendre $Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})$ com la diferència en el temps entre les fases de \textit{Consumption Transmission} dels dos protocols en un determinat nombre de rondes $R$. La inequació es pot desenvolupar una mica més, partint el cost del protocol \cite{busom}, sabent que
 $Cost_{2}(|Fragments|) = Cost_{KE_2} + Cost_{CT_2}(|Fragments|)$.
-\[Cost_{KE_2} \le  Cost_{KE_2} + Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
-\[0 \le Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
+\[Cost_{KE_2} <  Cost_{KE_2} + Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
+Finalment, podem simplificar treient $Cost_{KE_2}$ de la inequació, obtenint:
+\[0 < Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
+D'aquesta manera, podem concloure que si $Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})$ és positiu, serà millor usar \cite{ busom}. Si el resultat dóna negatiu, la millor opció serà \cite{recsi}, ja que el cost de comunicació és suficientment elevat com per ser més ràpid que \cite{busom}.  De forma resumida, si $\ \ |Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})| > Cost_{CT_2}(|Fragments|)$ la millor opció serà \cite{recsi}.
 \section{Simulació usant el dataset}
-Per comprovar d'una altra manera que hi ha una correlació entre la mida dels missatges i el temps en el protocol, s'ha usat el \textit{dataset} mencionat a l'inici de la \textit{Part \ref{sec:dataset}}. Per tal de realitzar-ho, s'ha comparat el cost que té la subestació en rebre la lectura general en les diferents rondes de la fase \textit{CT}. D'aquesta manera, es troba una funció semblant a la que es troba en les lectures dels consumidors, tal i com es veu a la \textit{Figura \ref{fig:cost-kaggle}}. Cal dir, que per veure els resultats de manera més significativa, s'ha usat $200$ simulacions de comunitats de $32$ comptadors\footnote{D'aquesta manera, la llargada màxima del missatge augmenta 4 bits.} i fent ús del algoritme \texttt{BruteForce} per realitzar el logaritme discret. Per aquesta raó, no s'ha usat el \texttt{HashedAlgorithm} ja que aquest no augmenta en cada ronda sinó al principi, abans de la fase \textit{KE}.
+Per comprovar d'una altra manera que hi ha una correlació entre la mida dels missatges i el temps en el protocol, s'ha usat el \textit{dataset} mencionat a l'inici de la \textit{Part \ref{sec:dataset}}. Per tal de realitzar-ho, s'ha comparat el cost que té la subestació en rebre la lectura general en les diferents rondes de la fase \textit{Consumption Transmission}. D'aquesta manera, es troba una funció semblant a la que es troba en les lectures dels consumidors, tal i com es veu a la \textit{Figura \ref{fig:cost-kaggle}}. Cal dir, que per veure els resultats de manera més significativa, s'ha usat $200$ simulacions de comunitats de $32$ comptadors\footnote{D'aquesta manera, la llargada màxima del missatge augmenta 4 bits.} i fent ús del algoritme \texttt{BruteForce} per realitzar el logaritme discret. Per aquesta raó, no s'ha usat el \texttt{HashedAlgorithm} ja que aquest no augmenta en cada ronda sinó al principi, abans de la fase \textit{Key Establishment}.
 \\
 \\
-En el gràfic del cost del protocol en funció de la ronda, es pot observar un pic a la primera ronda. Això és deu possiblement a que és la primera iteració de la fase \textit{CT} i s'ha de carregar el codi a memòria, cosa que comporta un cost en el temps, tant pels comptadors com per la subestació. Per aquest motiu, aquest pic només passa en la primera iteració. Aquest comportament també passa usant els altres algoritmes per realitzar el logaritme discret.
+En el gràfic del cost del protocol en funció de la ronda, es pot observar un pic a la primera ronda. Això és deu possiblement a que és la primera iteració de la fase \textit{Consumption Transmission} i s'ha de carregar el codi a memòria, cosa que comporta un cost en el temps, tant pels comptadors com per la subestació. Per aquest motiu, aquest pic només passa en la primera iteració. Aquest comportament també passa usant els altres algoritmes per realitzar el logaritme discret.
 \begin{figure}[H]
 	
 	\centering

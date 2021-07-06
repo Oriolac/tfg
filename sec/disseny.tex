@@ -118,7 +118,7 @@ A més a més, en algun moment voldrem desserialitzar-los, és a dir, donat un v
 A l'hora de fer una primera iteració sobre el projecte, es va decidir crear una capa entre \ciglib i el sistema, d'aquesta manera, s'intenta satisfer el requisit de mantenir el codi el més obert possible per a possibles futurs canvis. Per exemple, en el cas de voler usar un altre criptosistema homomòrfic per passar les claus de manera xifrada, només caldria que aquest heretés de \texttt{HomomorphicCypher} i usar-lo en \texttt{DecryptChunk}. Un altre cas interessant és també mantenir el més obert a extensions l'algoritme per calcular el logaritme discret, on només s'hauria de crear una classe de \texttt{LogarithmAlgorithm}. Tal i com es pot veure a la \textit{Figura \ref{fig:logarithm}}, a la llibreria \cite{ciglib} s'ha implementat tres classes que hereden d'ella, entre elles, \textit{Pollard's Lambda}.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=16cm]{classes/log.png}
+	\includegraphics[width=15cm]{classes/log.png}
 	\caption{Diagrama de classe LogarithmAlgorithm}
 	\label{fig:logarithm}
 \end{figure}
@@ -131,7 +131,6 @@ Aquest patró consisteix en tenir una interfície \textit{Estat} amb el mètode 
 \\
 \\
 No obstant això, aquest tipus d'arquitectura també té inconvenients. Un d'ells és que la seva rigidesa impedeix crear una bona estructura per projectes que necessiten molta asincronia. Per sort, el nostre protocol és el suficientment rígid per no necessitar accions d'asincronia, és més, la implementació es quedarà beneficiada d'aquesta rigidesa. Com que els comptadors hauran d'anar sincronitzats en cada ronda, la subestació no haurà de tenir diferents estats segons l'estat de cada comptador ni la seva informació específica referent a això, sinó que es relaxarà el problema tenint un estat global relacionat a tots els comptadors.
-\newpage
 \subsubsection{Implementació en \cite{recsi}}
 Tant la subestació com els comptadors comparteixen el nombre d'estats del protocol, que corresponen a la fase d'establiment de claus i configuració i la fase de la transmissió del consum, tal i com es pot veure a la \textit{Figura \ref{fig:recsi-state}}.
 \begin{figure}[H]
