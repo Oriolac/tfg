@@ -202,7 +202,7 @@ Abans de submergir-se en detalls de la solució proposada, la \Cref{part:criptog
 Un criptosistema està format per dos tipus d'algorismes, un que transforma el
 missatge intel·ligible a un altre inintel·ligible i l'altre, que funciona de manera inversa. D'aquesta manera, és possible crear una comunicació segura davant de possibles interceptors de la informació maliciosos.
 \\
-Un criptosistema està constituït per tres conjunts finits i dos famílies de funcions:
+Un criptosistema està constituït per tres conjunts finits i dues famílies de funcions:
 \begin{itemize}
 	\item El conjunt $M = \{m_1, m_2, ..., m_3\}$ que conté els elements els quals volem xifrar.
 	\item El conjunt $C = \{c_1, c_2, ..., c_3\}$ on hi haurà tots aquells elements que poden ser un missatge xifrat.
@@ -221,9 +221,9 @@ Segons la funció de xifratge i desxifratge, els criptosistemes es poden classif
 	\item El xifratge asimètric ens proporciona, que tothom o un gran conjunt d'usuaris puguin xifrar el seu missatge, però només un cert conjunt més petit, fins i tot podent ser només un individu, pugui desxifrar el missatge. Per tal de realitzar això, per xifrar i desxifrar s'utilitzaran dos diferents de claus:
 	\begin{itemize}
 		\item La \textit{clau pública} s'usarà per xifrar el missatge i la podrà utilitzar qui vulgui.
-		\item La \textit{clau privada} s'usara per desxifrar el missatge i només la podrà utilitzar un cert grup d'entitats.
+		\item La \textit{clau privada} s'usarà per desxifrar el missatge i només la podrà utilitzar un cert grup d'entitats.
 	\end{itemize}
-	Aquest tipus de criptosistemes es basen en xifrar mitjançant una funció $c = f(m)$ que sigui fàcil d'avaluar però sigui computacionalment difícil realitzar $f^{-1}(c)$ sense saber una informació addicional que ens permeti trobar el missatge. Aquests tipus de funcions es diuen \textit{trap-door function}.
+	Aquest tipus de criptosistemes es basen en xifrar mitjançant una funció $c = f(m)$ que sigui fàcil d'avaluar, però sigui computacionalment difícil realitzar $f^{-1}(c)$ sense saber una informació addicional que ens permeti trobar el missatge. Aquests tipus de funcions es diuen \textit{trap-door function}.
 	Els criptosistemes de clau pública, a diferència dels simètrics, no treballen a nivell de bit, sinó que representen el missatge com un número i realitzen operacions matemàtiques amb ell. 
 \end{itemize}
 
@@ -235,25 +235,25 @@ El problema del logaritme discret és un problema crític en la teoria de nombre
 Sigui $G$ un grup cíclic finit amb l'operació de multiplicació i l'element d'identitat 1 i sigui $g$ un generador del grup $G$. Llavors, cada element $a \in G$ es pot escriure de la forma:
 \[a = g^k, \quad k \in \mathbb{Z^+}. \] 
 Sabent el valor de $a$ i $g$ és computacionalment costós\footnote{És computacionalment costós només en determinats grups, com per exemple: grups cíclics com $Z_p$ o subgrups cíclics de corbes el·líptiques sobre cossos finits. %TODO: explicar quan
-} trobar $k$, ja que s'ha de realitzar una búsqueda de totes les possibles solucions fins trobar:
+} trobar $k$, ja que s'ha de realitzar una cerca de totes les possibles solucions fins a trobar:
 \[k = log_g(a).\]
 \subsection{Classificació}
 
 %Tot i que el problema de la descomposició en factors primers i el del logaritme discret són problemes diferents, en cap dels dos es coneix un algorisme eficient si no és realitzat per un ordinador quàntic. Els dos problemes estan catalogats actualment com problemes \textit{NP}  però no estan considerats \textit{NP-Complets} perquè no s'ha trobat una forma de reduir aquests problemes a un problema NP-Complet en temps polinomial.
-Encara no s'ha trobat cap algorisme eficient que resolgui el problema del logaritme discret en temps polinomial, per això, actualment pertany al conjunt de problemes \textit{NP}. No obstant això, no és considerat \textit{NP-Complet} ja que no s'ha trobat una forma de reduir aquest problema a un que ja sigui \textit{NP-Complet} en temps polinomial.
+Encara no s'ha trobat cap algorisme eficient que resolgui el problema del logaritme discret en temps polinomial, per això, actualment pertany al conjunt de problemes \textit{NP}. No obstant això, no és considerat \textit{NP-Complet}, ja que no s'ha trobat una forma de reduir aquest problema a un que ja sigui \textit{NP-Complet} en temps polinomial.
 \subsection{Algorisme Pollard's Lambda}\label{sec:pollards}
 J. M. Pollard \cite{pollard} va descriure dos algoritmes per resoldre el problema del logaritme discret: el mètode \textit{Rho} i el mètode \textit{Lambda} o també anomenat \textit{Kangaroo} \cite{kangaroo}. El mètode \textit{Lambda } relaxa una mica el problema, ja que, donat el grup cíclic $G$, es pretén resoldre el logaritme donat un interval definit entre uns llindars:
 \[g^k = a, \quad L \le k \le U.\]
 Per tal de resoldre-ho, es creen dues seqüències que, al trobar-se en un punt vol dir que s'ha trobat la potència que s'està buscant. El perquè del nom d'aquest mètode esdevé d'una metàfora, que rau en dos cangurs (les seqüències), un mans i l'altre salvatge. Aquests se situen en un punt que sabem i en un que no, que serà el que voldrem saber, respectivament. Quan vagin saltant i es trobin, sabent el comportament del salvatge podrem veure a quin punt estava situat al principi.
 \begin{enumerate}
-	\item S'escolleix una funció $f$ pseudoaleatòria que mapejarà els elements del grup a un conjunt petit d'enters positius $S$ denominats els salts:
+	\item S'escull una funció $f$ pseudoaleatòria que mapejarà els elements del grup a un conjunt petit d'enters positius $S$ denominats els salts:
 	\[f : G \rightarrow S, \qquad S = \{s_1, \dots, s_n\}\]
 	\item Tenint $b = U - 1$, es computa la primera seqüència tal que:
 	\[x_0 = g^b, \qquad x_{i+1} = x_i \cdot g^{f(x_i)}, \quad \ i \in \{1, 2, \dots\}\]
 	En aquesta seqüència, sabem a quin valor estem realitzant la potència sobre $g$, és a dir, seria el cangur mans.
 	\item Es computa el sumatori dels elements en els salts aleatoris i s'observa que:
 	\[d = \sum_{i=0}^{N - 1} f(x_i) ,  \qquad \qquad x_N = x_0 \cdot g^d = g^{b + d}\]
-	\item La segona seqüència, que correspondrà al cangur salvatge, vindrà donada per:
+	\item La segona seqüència, que correspondrà al cangur salvatge, serà definida de la següent manera:	
 	\[y_0 = a, \qquad y_{i+1} = y_i \cdot g^{f(y_i)}, \qquad i \in \{1, 2, \dots\}\]
 	i estarà acompanyada per la seqüència d'enters $\{d_0, d_1, \dots \}$:
 	\[d_n = \sum_{i=0}^{n}f(y_i)\]
@@ -272,22 +272,22 @@ Diffie-Hellman \cite{diffie-hellman} és un mètode d'intercanvi de claus cripto
 \\
 Posem d'exemple dues persones (Alice i Bob) que es volen comunicar de manera secreta i es volen posar d'acord sobre un nombre com a clau per tal de xifrar la conversa. Sigui $G$ un grup multiplicatiu d'ordre $q$ i sent $g$ un generador de $G$, $\quad G = \langle g \rangle$, ells dos tindran la seva contribució secreta $a$ i $b$ a la clau compartida $K$. Cada un dels participants calcularà $S_i = g^{s_i} $. D'aquesta manera, Alice i Bob computaran $A = g^a$ i $B = g^b$ respectivament. La clau pública, per tal de xifrar els missatges a la seva conversa, serà $ K = g^{ab} = A^b = B^a $. L'exemple actual està realitzat entre només dues entitats, però per regla general:
 \begin{enumerate}
-	\item Cada participant $i \in P \ | \ P = \{1, 2, \dots, n\}$, éssent $n$ el nombre de participants, té al seva clau secreta $s_i \in G$.
+	\item Cada participant $i \in P \ | \ P = \{1, 2, \dots, n\}$, essent $n$ el nombre de participants, té a la seva clau secreta $s_i \in G$.
 	\item Cada participant $i$ calcularà i enviarà la seva clau pública $S_i = g^{s_i}$ al participant $(i+1)$.
-	\item Cada participant $(i + 1)$ calcularà $(S_{i})^{s_{i + 1}}$ i enviarà el resultat al participant posterior $(i + 2)$. Aquest procediment es realitzarà $n -1$ vegades, és a dir, fins arribar al participant anterior $(i -1)$ al propietari de la clau $S_i$.
+	\item Cada participant $(i + 1)$ calcularà $(S_{i})^{s_{i + 1}}$ i enviarà el resultat al participant posterior $(i + 2)$. Aquest procediment es realitzarà $n -1$ vegades, és a dir, fins a arribar al participant anterior $(i -1)$ al propietari de la clau $S_i$.
 	\item D'aquesta manera, la clau pública del sistema serà el resultat de posar $g$ a la potència de totes les claus privades:
 	\[K = g^{\prod_{i}^{n} s_i}\]
 \end{enumerate}
-L'establiment de claus també es possible fer-lo realitzant la multiplicació entre la clau pública de cada participant $S_i = g^{s_i}$ i la clau parcial compartida que esdevindrà la clau pública del sistema en la última iteració. Llavors, posant com a exemple el participant $1$ en la primera ronda, calcula:
+L'establiment de claus també es possible fer-lo realitzant la multiplicació entre la clau pública de cada participant $S_i = g^{s_i}$ i la clau parcial compartida que esdevindrà la clau pública del sistema en l'última iteració. Llavors, posant com a exemple el participant $1$ en la primera ronda, calcula:
 \[S_i \cdot g^{s_{i + 1}} = g^{s_i} \cdot g^{s_{i+1}} = g^{s_i + s_{i+1}}\]
-De manera que, realitzant el càlcul en la última iteració del protocol, podem veure que la clau compartida o pública del sistema esdevé:
+De manera que, realitzant el càlcul en l'última iteració del protocol, podem veure que la clau compartida o pública del sistema esdevé:
 \[K = g^{\sum_{i}^{n} s_i}\]
 \subsection{ElGamal}
 Una altra aplicació basada en el problema de solucionar el logaritme discret en un grup és el criptosistema asimètric ElGamal \cite{elgamal}. ElGamal proporciona certa aleatorietat que dificultarà possibles atacs de força bruta centrats en generar totes les possibles encriptacions. No obstant això, té l'inconvenient que la llargada del text xifrat serà el doble de llarg que el missatge en clar. La seva configuració és donada per:
 \begin{itemize}
 	\item Un grup abelià $G(+, \cdot)$ d'ordre $n$ que tingui un cardinal primer gran. 
 	\item L'element generador $g \in G$.
-	\item La clau privada $d \in [1, n-1]$ que també serà la informació trampa.
+	\item La clau privada $d \in [1, n-1]$ que també serà la informació \textit{trampa}.
 	\item La clau pública $h \in G \ | \ h = g^d$.
 \end{itemize}
 \subsubsection{Xifratge}
@@ -319,7 +319,7 @@ una corba el·líptica $E(\mathbb{F})$ és una corba plana sobre $\mathbb{F}$ on
 \[\mathcal{W} : \; Y^2 = X^3 + aX + b\]
 A més a més, s'ha de complir que el discriminant de l'equació de la corba $\Delta \mathcal{W} = 4a^3 + 27b^2$ sigui $\Delta \mathcal{W} \neq 0$ per tal que sigui una corba el·líptica. També es pot trobar representada la corba el·líptica com l'equació general de Weierstrass \cite{ecc:normal-form}:
 \[\mathcal{W} : \; Y^2 + a_1XY + a_3Y = X^3 + a_2X^2 + a_4X + a_6 \]
-Clarament, els punts d'aquesta equació vindran determinats pel cos finit en que estan, és a dir, no seran valors continus. Amb l'objectiu que sigui un grup commutatiu o abelià $G(+)$, existirà un element, anomenat punt a l'infinit $\mathcal{O}$, que realitzarà d'element neutre sobre la operació d'addició. D'aquesta forma, s'entén com a corba el·líptica sobre un cos finit com el conjunt següent:
+Clarament, els punts d'aquesta equació vindran determinats pel cos finit en què estan, és a dir, no seran valors continus. Amb l'objectiu que sigui un grup commutatiu o abelià $G(+)$, existirà un element, anomenat punt a l'infinit $\mathcal{O}$, que realitzarà d'element neutre sobre l'operació d'addició. D'aquesta forma, s'entén com a corba el·líptica sobre un cos finit com el conjunt següent:
 \[ E(\mathbb{F}) = \{(x, y) \in E : x, y \in \mathbb{F} \} \cup \{\mathcal{O}\}\]
 \subsubsection{Operacions}
 Sobre tots els elements de la corba el·líptica $\forall P, Q \in E(\mathbb{F})$, es pot realitzar l'operació binària d'addició tal que:
@@ -347,7 +347,7 @@ El cofactor ens determina el nombre de subgrups de la corba, en cas que sigui $1
 \subsubsection{Grup abelià}
 Es pot demostrar que $E(\mathbb{F})$ té l'estructura de grup abelià o commutatiu sobre l'operació d'addició, ja que:
 \begin{enumerate}
-	\item Té estructura algebraica de grup, és a dir, hi ha l'existència d'element neutre $\mathcal{O}$, l'element invers $-P$\footnote{sent $P=(p_1, p_2)$, el seu invers serà $-P = (p_1, -p_2)$} i la operació d'addició és associativa:
+	\item Té estructura algebraica de grup, és a dir, hi ha l'existència d'element neutre $\mathcal{O}$, l'element invers $-P$\footnote{sent $P=(p_1, p_2)$, el seu invers serà $-P = (p_1, -p_2)$} i l'operació d'addició és associativa:
 	\begin{equation*}
 		\begin{aligned}
 			P + \mathcal{O} &= P & \quad & t.q. \quad P \in E(\mathbb{F})\\
@@ -355,7 +355,7 @@ Es pot demostrar que $E(\mathbb{F})$ té l'estructura de grup abelià o commutat
 			P + (Q + R) &= (P + Q) + R & \quad & t.q. \quad P, Q, R \in E(\mathbb{F})\\
 		\end{aligned}
 	\end{equation*}
-	\item Té la propietat commutativa sobre la suma, cosa li dona estructura de grup abelià:
+	\item Té la propietat commutativa sobre la suma, cosa li dóna estructura de grup abelià:
 \end{enumerate}
 \[ P + Q = Q + P  \quad \; t.q. \quad P, Q \in E(\mathbb{F}) \]
 Així doncs, es poden utilitzar en criptosistemes com si fossin $\mathbb{Z}_p$, tenint l'avantatge que els criptosistemes de corba el·líptica basats en el problema del logaritme discret (\textit{ECCDLP}) permeten una mida de les claus menor pel mateix nivell de seguretat \cite{nist-ecc}. El problema del logaritme discret en corbes el·líptiques rau en la dificultat de trobar $d \in \mathbb{F}_q$, tenint dos punts $H, G \in E(\mathbb{F}_q)$, tal que:
@@ -376,11 +376,11 @@ Es pot comprovar que la funció de xifratge d'ElGamal es homomòrfica tal que:
 	=& \ E_y(m_1 \cdot m_2)
 \end{aligned}
 \end{equation*}
-ElGamal és només homomòrfic usant l'operació de multiplicació. Per tal de tenir la propietat homomòrfica respecte la suma, en lloc de xifrar $m$, es xifrarà $g^m$ tal que:
+ElGamal és només homomòrfic usant l'operació de multiplicació. Per tal de tenir la propietat homomòrfica respecte a la suma, en lloc de xifrar $m$, es xifrarà $g^m$ tal que:
 \[E_(g^{m_1})  \cdot E_(g^{m_2}) = E(g^{m_1} \cdot g^{m_2}) = E(g^{m_1 + m_2})\] 
 La dificultat que es paga al xifrar $g^{m_1}$ i $g^{m_2}$ és que, a l'hora de voler recuperar el missatge, s'haurà de calcular un logaritme discret per trobar $m_1 + m _2$.
 \subsection{Exemple senzill de l'ús de xifratge homomòrfic}\label{subsec:homomorfism-exemple}
-En un sistema agregatiu, l'enviament de consums elèctrics es voldrà que la subestació pugui desxifrar el consum global d'una comunitat però, en cas que es vulgui saber només les dades d'un individu mitjançant el seu missatge xifrat i vulnerar la seva privacitat, aquesta no ho pugui fer. Per aconseguir-ho, un cas és afegir un cert soroll al missatge a l'hora de xifrar-lo, que després gràcies a la resta participants es pugui contrarestar. Per posar un exemple, donem el cas on dos individus (\textit{A} i \textit{B}) es volen comunicar de manera agregativa, a un tercer (\textit{C}) però sense donar el seu propi missatge. Suposem que els tres tenen a disposició un sistema criptogràfic usant xifratge homomòrfic. Si \textit{A} i \textit{B} es posen d'acord i creen una clau pel tercer de manera que:
+En un sistema agregatiu, l'enviament de consums elèctrics es voldrà que la subestació pugui desxifrar el consum global d'una comunitat, però, en cas que es vulgui saber només les dades d'un individu mitjançant el seu missatge xifrat i vulnerar la seva privacitat, aquesta no ho pugui fer. Per aconseguir-ho, un cas és afegir un cert soroll al missatge a l'hora de xifrar-lo, que després gràcies a la resta participants es pugui contrarestar. Per posar un exemple, donem el cas on dos individus (\textit{A} i \textit{B}) es volen comunicar de manera agregativa, a un tercer (\textit{C}) però sense donar el seu propi missatge. Suposem que els tres tenen a disposició un sistema criptogràfic usant xifratge homomòrfic. Si \textit{A} i \textit{B} es posen d'acord i creen una clau pel tercer de manera que:
 \begin{enumerate}
 	\item Configuració:
 	\begin{itemize}
@@ -396,22 +396,24 @@ En un sistema agregatiu, l'enviament de consums elèctrics es voldrà que la sub
 En l'actualitat s'ha proposat tres tipus de mecanismes o estratègies per tal de preservar la privacitat de les lectures dels comptadors intel·ligents:
 \begin{itemize}
 	\item \textbf{Pertorbatiu}. En aquests tipus de propostes, els comptadors afegeixen un soroll a la lectura del consum abans de transmetre-ho a l'estació. D'aquesta manera, aquest últim només obté la versió transformada del consum de la llar. Aquest tipus de solucions requereixen un ajustament per tal de tenir un compromís entre la privacitat i la precisió de les dades. Afegir molt soroll implicarà unes lectures poc acurades. En canvi, afegir-ne poc comportarà una vulnerabilitat en la privacitat de la llar. 
-	\item \textbf{Anònim}. En aquests sistemes, el consum és transmès de tal forma que el proveïdor rep les lectures però sense poder saber de quina llar prové cadascuna. Normalment per aquest tipus de sistemes s'utilitzen pseudònims. En el cas que tots els habitatges d'un entorn utilitzen el mateix pseudònim, no es podrà saber d'on prové cada lectura.
-	\item \textbf{Agregatiu}. Els comptadors s'agreguen en comunitats per tal de sumar les seves lectures abans de transmetre-les a la subestació. Les dades solen ser agregades gràcies a un \textit{dealer} o distribuïdor, o fent ús de xifratge homomòrfic. Els protocols criptogràfics han de garantir que la companyia elèctrica únicament pot rebre la suma dels consums i en cap cas podrà assabentar-se de les lectures individuals. No obstant això, això implicarà l'ús de tècniques computacionals segures per tal de prevenir atacs contra la privacitat.
+	\item \textbf{Anònim}. En aquests sistemes, el consum és transmès de tal forma que el proveïdor rep les lectures. però sense poder saber de quina llar prové cadascuna. Normalment per aquest tipus de sistemes s'utilitzen pseudònims. En el cas que tots els habitatges d'un entorn utilitzen el mateix pseudònim, no es podrà saber d'on prové cada lectura.
+	\item \textbf{Agregatiu}. Els comptadors s'agreguen en comunitats per tal de sumar les seves lectures abans de transmetre-les a la subestació. Les dades solen ser agregades gràcies a un \textit{dealer} o distribuïdor, o fent ús de xifratge homomòrfic. Els protocols criptogràfics han de garantir que la companyia elèctrica únicament pot rebre la suma dels consums i en cap cas podrà assabentar-se de les lectures individuals. Així i tot, això implicarà l'ús de tècniques computacionals segures per tal de prevenir atacs contra la privacitat.
 \end{itemize}
 \section{Sistemes pertorbatius}
 \subfile{sec/pertob.tex}
-\section{Sistemes d'anonimitat}
+\section{Sistemes d'anonimat}
 \subfile{sec/anonimitat.tex}
 \section{Sistemes agregatius}
-Els sistemes agregatius, no es preocupen de la identitat del comptador ni intenten manipular el significat de les lectures per tal de no suggerir més informació de la necessària. En comptes, s'agreguen els comptadors en un conjunt anomenat \textit{barri} o \textit{comunitat} per tal que la subestació només pugui saber el consum global, evitant així informació individual. El mètode més popular per tal de passar les dades de manera xifrada és usant xifratge homomòrfic. 
+Els sistemes agregatius no es preocupen de la identitat del comptador ni intenten manipular el significat de les lectures per tal de no suggerir més informació de la necessària. En comptes, s'agreguen els comptadors en un conjunt anomenat \textit{barri} o \textit{comunitat} per tal que la subestació només pugui saber el consum global, evitant així informació individual. El mètode més popular per tal de passar les dades de manera xifrada és usant xifratge homomòrfic. 
 \subsection{Proposta de Busom}
 \subfile{sec/propostes/busom.tex}
+\newpage
 \subsection{L'actual proposta}
 El protocol \cite{recsi} es basa en un sistema agregatiu, ja que la subestació només tindrà a la seva disposició el sumatori de lectures dels comptadors que pertanyin al seu conjunt. Per tal d'aconseguir només la lectura total del barri tenint les dades de cada llar protegides, es fa ús de xifratge homomòrfic.
-En aquesta solució, també es proposa realitzar una configuració senzilla que no impliqui una gran complexitat algorítmica per tal que la subestació tingui la clau per poder trobar el consum total dels comptadors, sense poder arribar a tenir una lectura individual. No obstant això, també s'ha vigilat que la transmissió de les lectures fos el més senzilla possible, per tal que la comunicació sigui fàcil i simple.\\
+En aquesta solució, també es proposa realitzar una configuració senzilla que no impliqui una gran complexitat algorítmica per tal que la subestació tingui la clau per poder trobar el consum total dels comptadors, sense poder arribar a tenir una lectura individual. No obstant això, també s'ha vigilat que la transmissió de les lectures fos tan senzilla com sigui possible, per tal que la comunicació sigui fàcil i simple.
 \\
- La configuració, en aquest protocol, es basa en crear una clau privada per cada comptador i una, per la subestació. De manera que l'element simètric de la suma de les claus privades dels comptadors és la clau privada de la subestació. Així doncs, si els comptadors sumen a cada missatge la seva clau privada, la subestació podrà rebre el missatge total restant-li la seva. Per tal que la subestació no pugui saber la clau privada dels comptadors però pugui calcular i saber la seva clau, es passaran diversos fragments de les claus de forma agregada, és a dir, sumades, mitjançant un protocol que utilitzi xifratge homomòrfic. El protocol que s'usa en aquesta fase de configuració de claus és l'anteriorment explicat \cite{busom}.
+\\
+ La configuració, en aquest protocol, es basa en crear una clau privada per cada comptador i una, per la subestació. De manera que l'element simètric de la suma de les claus privades dels comptadors és la clau privada de la subestació. Així doncs, si els comptadors sumen a cada missatge la seva clau privada, la subestació podrà rebre el missatge total restant-li la seva. Per tal que la subestació no pugui saber la clau privada dels comptadors, però pugui calcular i saber la seva clau, es passaran diversos fragments de les claus de forma agregada, és a dir, sumades, mitjançant un protocol que utilitzi xifratge homomòrfic. D'aquesta manera, el sistema s'estalvia la necessitat de tenir un distribuïdor de claus. El protocol que s'usa en aquesta fase de configuració de claus és l'anteriorment explicat \cite{busom}.
 \\\\
 Així doncs, es pot diferenciar dos estats ben diferenciats d'aquest protocol:
 \begin{enumerate}
@@ -424,7 +426,7 @@ Així doncs, es pot diferenciar dos estats ben diferenciats d'aquest protocol:
 	\caption{Diagrama de seqüència del protocol \cite{recsi}}
 \end{figure}
 \subsubsection{Configuració}\label{sec:configuracio-recsi}
-Abans d'engegar el sistema, es necessita que tant els comptadors com la subestació utilitzin el mateix cos i element generador per tal de xifrar i desxifrar correctament els missatges. El criptosistèma asimètric emprat, al igual que en \cite{busom} serà \textit{ElGamal}. Per tant, s'haurà d'elegir:
+Abans d'engegar el sistema, es necessita que tant els comptadors com la subestació utilitzin el mateix cos i element generador per tal de xifrar i desxifrar correctament els missatges. El criptosistèma asimètric emprat, igual que en \cite{busom} serà \textit{ElGamal}. Per tant, s'haurà d'elegir:
 \begin{itemize}
 	\item Un grup abel·lià per tal de poder usar el criptosistema asimètric ElGamal. En el nostre cas, s'usa criptografia de corba el·líptica. Per tant, es necessita una corba el·líptica $E(\mathbb{F}_q)$ definida sobre un cos primer $\mathbb{F}_q$ d'ordre $p$ d'almenys 256 bits.
 	\item Un punt $P \in E(\mathbb{F}_q)$, que serà l'element generador del subgrup cíclic.
@@ -434,18 +436,18 @@ Una funció \textit{hash} és tota aquella funció que pot ser utilitzada per tr
 }
 $H$ que retorni un punt $Q \in E(F_q)$ donat un element de $F_q$. Això ens permetrà operar amb elements discrets com si fossin punts de la corba. 
 \subsubsection{Establiment de claus}\label{section:ks}
-La configuració de les claus s'ha de realitzar a l'inici del sistema i cada cop que hi hagi un canvi en el conjunt de comptadors del barri, per exemple, quan s'afegeix o s'elimina un comptador. El que es tractarà d'aconseguir en aquesta fase és que cada entitat del barri, tant subestació com els comptadors, tinguin la seva clau secreta tal que la suma de totes elles sigui 0.
+La configuració de les claus s'ha de realitzar a l'inici del sistema i cada cop que hi hagi un canvi en el conjunt de comptadors del barri, per exemple, quan s'afegeix o s'elimina un comptador. El que es tractarà d'aconseguir en aquesta fase és que cada entitat del barri, tant la subestació com els comptadors, tinguin la seva clau secreta tal que la suma de totes elles sigui 0.
 \\
 Així doncs, les claus dels comptadors $s_i$ i de la subestació $s_0$ han de sumar $0$. Aquesta clau es farà servir per trobar el consum total del barri un cop agrupats els valors xifrats, de manera semblant a l'exemple explicat en la \textit{Secció \ref{subsec:homomorfism-exemple}}. Una restricció imprescindible d'aquest procés és que ni la subestació ni els comptadors han de poder saber les claus dels altres, ja que aquestes són secretes i s'usaran per passar les lectures.
 \begin{enumerate}
 	\item Cada comptador $M_i$ generarà el seu secret $s_i < p$ de manera aleatòria. La clau generada per cada comptador ha de ser d'una llargada similar a l'ordre del cos $F_q$, és a dir, $p$. Aquesta serà dividida en $l$ \textit{fragments} de, com a màxim, 13 bits, de manera que:
 	\[s_i = (s_{il}\ ||\ \dots ||\ s_{i_2}\ ||\ s_{i1})\]
-	Es requereix que $13 \cdot l$ sigui igual o més gran que la llargada en bits de $p$. Per tal de passar-ho de manera que la subestació no pugui saber el fragment d'un comptador en específic però si la suma de fragments de tots els comptadors del barri, s'usa el protocol \cite{busom} enviant $l$ paquets en la fase de transmissió corresponent al nombre de fragments a enviar.
+	Es requereix que $13 \cdot l$ sigui igual o més gran que la llargada en bits de $p$. Per tal de passar-ho de manera que la subestació no pugui saber el fragment d'un comptador en específic, però si la suma de fragments de tots els comptadors del barri, s'usa el protocol \cite{busom} enviant $l$ paquets en la fase de transmissió corresponent al nombre de fragments a enviar.
 	\item Com a resultat de cada execució $j \ , \ \ 1 \le j \le l$ del pas 1 i que els comptadors hagin enviat els fragments de la posició $j$, la subestació rep l'agregació d'aquests paquets, de manera que calcula:
 	\[s_{1j} + s_{2j} + \dots + s_{nj} = \sum_{i=1}^{n} s_{ij}\]
 	\item Un cop calculats tots els fragments resultants, la subestació ha de concatenar les diferents agregacions per tal de trobar l'agregació de totes les claus privades dels comptadors:
 	\[s_0^{'} = \sum_{j=1}^{l} \Big( 2^{13 \cdot (j - 1)} \cdot \sum_{i=1}^{n} s_{ij} \Big) = \sum_{i=1}^{n} s_i\]
-	Es pot comprovar que, usant el protocol de Busom, la subestació no pot saber un fragment del secret d'un comptador sinó el valor sumat de tots els secrets, cosa que també implica que no pugui saber la clau complerta. A més a més, es pot veure clarament que a la subestació no li serveix de res saber un dels fragments d'un individu perdent-ne un altre pel camí, per tant, no és necessari usar el protocol \cite{repair-busom}. Un cop té l'agregació de claus privades $s_0^{'}$, la subestació defineix la seva clau secreta com:
+	Es pot comprovar que, usant el protocol de Busom, la subestació no pot saber un fragment del secret d'un comptador sinó el valor sumat de tots els secrets, cosa que també implica que no pugui saber la clau completa. A més a més, es pot veure clarament que a la subestació no li serveix de res saber un dels fragments d'un individu perdent-ne un altre pel camí, per tant, no és necessari usar el protocol \cite{repair-busom}. Un cop té l'agregació de claus privades $s_0^{'}$, la subestació defineix la seva clau secreta com:
 	\[s_0\ =\ - s_0^{'} \quad (mod \ p)\]
 	Pel que fa a la relació entre les claus privades del sistema, es pot comprovar que l'agregació de claus privades dels comptadors més la clau privada de la subestació serà:
 	\[\sum_{i=1}^{n} s_i + s_o = 0 \quad (mod \ p)\] 
@@ -463,9 +465,9 @@ La transmissió dels comptadors intel·ligents a la subestació es realitza de m
 	\[D = C + s_0 \cdot H(t) = m \cdot P + \big( s_0^{'} + s_0 \big) \cdot H(t) = m \cdot P\]
 	\item Finalment, la subestació computarà el logaritme discret de $D$ en base $P$ per tal d'obtenir la lectura resultant del barri.
 	\[m = \sum_{i=1}^{n} m_i = log_P(D)\]
-	Com més alta sigui la freqüència d'enviament de les lectures, és a dir, més curts siguin els intervals de temps, més petit serà el valor del consum de cada comptador. Això implica una computació no tan costosa des del punt de vista experimental. Per tant, usar l'algorisme de Pollards Lambda, o d'altres que sol·lucionin el logaritme discret, resultarà més fàcil quan l'enviament és més freqüent i les comunitats són més petites.
+	Com més alta sigui la freqüència d'enviament de les lectures, és a dir, més curts siguin els intervals de temps, més petit serà el valor del consum de cada comptador. Això implica una computació no tan costosa des del punt de vista experimental. Per tant, usar l'algorisme de Pollards Lambda, o d'altres que solucionin el logaritme discret, resultarà més fàcil quan l'enviament és més freqüent i les comunitats són més petites.
 \end{enumerate}
-A l'usar \cite{busom} en la fase \textit{KE} per tal de computar la clau de la subestació, es pot veure que, en un principi, el cost computacional serà una mica major que \cite{busom}, ja que \cite{recsi} ha de realitzar el càlcul del logaritme discret tant a l'establiment de claus com a la transmissió de les lectures.
+En usar \cite{busom} en la fase \textit{KE} per tal de computar la clau de la subestació, es pot veure que, en un principi, el cost computacional serà una mica major que \cite{busom}, ja que \cite{recsi} ha de realitzar el càlcul del logaritme discret tant a l'establiment de claus com a la transmissió de les lectures.
 \newpage\part{Disseny de la implementació}\label{part:disseny}
 \subfile{sec/disseny.tex}
 \newpage

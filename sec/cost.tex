@@ -7,11 +7,12 @@ Pel que fa a l'anàlisi de costos, s'ha intentat segregar segons els diferents p
 No obstant això, anteriorment s'ha especificat certes propietats que comporta el sistema:
 \label{sec:dataset}
 \begin{itemize}
+	\item Les simulacions s'han dut a terme usant un processador \texttt{AMD Ryzen 7 4800H @ 2.900GHz} de $16$ nuclis. S'ha realitzat 150 iteracions en cada simulació i s'ha fet la mitjana sobre aquestes dades per trobar un valor representatiu.
 	\item Es considera que entre ronda i ronda hi haurà, com a mínim, un interval de 15 minuts, és a dir, la lectura que es passarà correspondrà al consum dels últims 15 minuts.
 	\item Per tal de no sobrecarregar l'algoritme del logaritme discret, les lectures dels comptadors han de tenir un cert grau de control en la seva mida en bits.\\
-	 Primer, es va pensar realitzar l'anàlisi amb lectures pseudo-aleatòries. Per aquesta raó, està creada la classe \texttt{RandomConsumption}, que enviava un enter positiu aleatori de, com a màxim, 13 bits. Aquesta classe ens servirà per poder comparar els diferents protocols o realitzar funcions estadístiques, ja que les lectures no es comportaran diferent segons la ronda quan s'envien.\\
-	 No obstant això, amb la intenció de tenir una simulació més realista, s'ha buscat un \textit{dataset} que ens permeti visualitzar el consum elèctric d'una llar \cite{kaggle-consumption} i crear un lectures més properes a les reals. Aquestes dades ens serviran per poder veure fins quan el cost de realitzar el logaritme discret és factible.\\
-	 Les dades trobades aporten el consum elèctric amb una freqüència de mostreig d'un minut durant aproximadament 4 anys en tres espais diferents de la llar, tal i com es pot apreciar a la \textit{Taula \ref{tab:ex-kaggle}}.
+	 Primer, es va pensar realitzar l'anàlisi amb lectures pseudoaleatòries. Per aquesta raó, està creada la classe \texttt{RandomConsumption}, que enviava un enter positiu aleatori de, com a màxim, 13 bits. Aquesta classe ens servirà per poder comparar els diferents protocols o realitzar funcions estadístiques, ja que les lectures no es comportaran diferent segons la ronda quan s'envien.\\
+	 No obstant això, amb la intenció de tenir una simulació més realista, s'ha buscat un \textit{dataset} que ens permeti visualitzar el consum elèctric d'una llar \cite{kaggle-consumption} i crear lectures més properes a les reals. Aquestes dades ens serviran per poder veure fins quan el cost de realitzar el logaritme discret és factible.\\
+	 Les dades trobades aporten el consum elèctric amb una freqüència de mostreig d'un minut durant aproximadament 4 anys en tres espais diferents de la llar, tal com es pot apreciar a la \textit{Taula \ref{tab:ex-kaggle}}.
 	\begin{table}[H]
 		\centering
 			\begin{tabular}{llrrr}
@@ -51,7 +52,7 @@ No obstant això, anteriorment s'ha especificat certes propietats que comporta e
 	\caption{Primeres files del dataset transformat realitzant la mitjana}
 	\label{tab:ex-kaggle-mean}
 	\end{table}
-	   Així doncs, es pot visualitzar la mitjana trobada pel consum elèctric total de la llar en funció del horari de la següent forma:
+	   Així doncs, es pot visualitzar la mitjana trobada pel consum elèctric total de la llar en funció de l'horari de la següent forma:
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{imgs/cost/consumptionmin.png}
@@ -66,7 +67,7 @@ Per tal de variar les lectures entre diferents comptadors, s'ha creat una cota m
 	\label{fig:consumptionmin2}
 \end{figure}
 Finalment,  s'han agregat els consums de 15 minuts en 15 minuts, ja que la lectura es passarà en intervals de 15 minuts, com ja s'ha mencionat anteriorment. D'aquesta manera, cada quart d'hora correspon a una classe d'equivalència. \\
-En conclusió, es pot afirmar que agafant un nombre pseudo-aleatori dins del rang possible corresponent a cada ronda, es pot acabar generant un dia de lectures més o menys fidel a la realitat. No obstant això, cal esmentar que s'ha modificat lleugerament la cota superior per tal de crear més variació entre comptadors, tal i com es pot veure a la \textit{Figura \ref{fig:consumption2}}.
+En conclusió, es pot afirmar que agafant un nombre pseudoaleatori dins del rang possible corresponent a cada ronda, es pot acabar generant un dia de lectures més o menys fidel a la realitat. No obstant això, cal esmentar que s'ha modificat lleugerament la cota superior per tal de crear més variació entre comptadors, tal com es pot veure a la \textit{Figura \ref{fig:consumption2}}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{imgs/cost/consumption2.png}
@@ -80,22 +81,23 @@ Es pot veure el tractament del \textit{dataset} i de les dades obtingudes en l'a
 El primer que es voldrà analitzar seran els diferents algoritmes implementats que realitzen el logaritme discret, que són un total de tres:
 \begin{itemize}
 	\item Pollard's Lambda, descrit a la \textit{Secció \ref{sec:pollards}}.
-	\item Algoritme de força bruta \texttt{BruteForce}, on el generador passa pels possibles elements del grup fins trobar la potència. Aquest algoritme es va utilitzar per realitzar diversos tests i s'ha cregut encertat comparar-lo amb el Pollard's Lambda.
+	\item Algoritme de força bruta \texttt{BruteForce}, on el generador passa pels possibles elements del grup fins a trobar la potència. Aquest algoritme es va utilitzar per realitzar diversos tests i s'ha cregut encertat comparar-lo amb el Pollard's Lambda.
 	\item Algoritme \textit{singleton} de força bruta \texttt{HashedAlgorithm}, on es realitza un cop l'algoritme per guardar les relacions entre tots els elements i la seva respectiva potència. De manera que, si es carrega la classe abans, l'únic cost a l'hora de realitzar el logaritme discret serà l'accés a memòria. No obstant el cost del temps és més reduït, la memòria que ocupa és bastant gran i es necessita un temps inicial per construir la taula. Al final, el que tindrem a l'hora de cridar el mètode serà un \textit{HashMap} que, donat un element $a \in \mathbb{Z}_p$ o  $A \in E(\mathbb{Z}_p)$ ens retornarà la seva clau $k$, sabent que:
 	\[g^k = a ,\quad \textrm{ usant  }\ \mathbb{Z}_p\]
 	\[G \cdot k = A,\quad \textrm{ usant  }\ E(\mathbb{Z}_p)\]
 \end{itemize}
-L'anàlisi del protocol en funció dels algoritmes s'ha dut a terme usant un processador \texttt{AMD Ryzen 7 4800H @ 2.900GHz} de $4$ nuclis. El generador de lectures usat és el \texttt{RandomConsumption} per tenir la mateixa configuració pel que fa a la llargada dels missatges, ja sigui en \textit{Key Establishment} com \textit{Consumption Transmission}. A l'hora d'analitzar en funció de l'algoritme \texttt{BruteForce}, a causa del temps que requereix per realitzar el logaritme discret, només s'ha repetit el cas 20 vegades. Per aquest motiu possiblement, veiem a la \textit{Taula \ref{tab:brute}} que el temps és major a \textit{Consumption Transmission} que \textit{Key Establishment}, ja que no hi ha suficients dades.
+El generador de lectures usat és el \texttt{RandomConsumption} per tenir la mateixa configuració pel que fa a la llargada dels missatges, ja sigui en \textit{Key Establishment} com \textit{Consumption Transmission}. 
+A l'hora d'analitzar en funció de l'algoritme \texttt{BruteForce}, a causa del temps que requereix per realitzar el logaritme discret, només s'ha repetit el cas 100 cops per cada configuració. Un dels motius perquè la fase \textit{Consumption Transmission} és un pèl més costosa que \textit{Key Establishment} és perquè a l'hora de passar l'últim fragment de les claus, aquest té un valor més petit. Això causa que es resolgui el logaritme discret més ràpidament.
 	\begin{table}[H]
 		\centering
-		\begin{tabular}{lrrrrr}
+		\begin{tabular}{lrrrrrrr}
 			\centering
-			&\multicolumn{5}{l}{\centering Temps (ms)}\\
+			&\multicolumn{7}{l}{\centering Temps (ms)}\\
 			\toprule
-			Num meters: &           3  &       4  &           5  &            8  &            16 \\
+			Num meters: &           3  &       4  &           5  &            8  &            16 & 32 & 64\\
 			\midrule
-			ct &  13033.5 &  17353.66 &  21732.06 &  37016.33 &  78411.33 \\
-			ke &  12034.19 &  17373.6 &  21035.46 &  34766.13 &  73173.26 \\
+			ct &  13033.5 &  17353.66 &  21732.06 &  37016.33 &  78411.33 &   163313.4 &  350156.66 \\
+			ke &  12034.19 &  17373.6 &  21035.46 &  34766.13 &  73173.26 &  153523.73 &  329552.0 \\
 			\bottomrule
 		\end{tabular}
 		\caption{Cost experimental del protocol usant \texttt{BruteForce}.}
@@ -133,7 +135,7 @@ Els resultats en \texttt{PollardsLambda} i \texttt{HashedAlgorithm}, que es most
 	\caption{Cost experimental del protocol usant \texttt{HashedAlgorithm}.}
 	\label{tab:hashed}
 \end{table}
-No obstant això, es pot observar que la funció de cost en tots els algoritmes és lineal i no exponencial, tal i com hauria de ser. Això és degut a les especificacions del processador, ja que només té 4 nuclis i no permet que els comptadors treballin de manera simultània. Això provoca que, al usar un nombre de processos més elevat que el de nuclis o \textit{threads virtuals}, en cas que en tingués, no es pot realitzar una simulació paral·lela. Gràcies a això també es pot explicar perquè la fase \textit{KE}, que és la que comporta més comunicació entre comptadors i subestació, és la fase més costosa usant els algoritmes \texttt{HashedAlgorithm} i \texttt{PollardsLambda}, on el cost del logaritme és més baix.
+No obstant això, es pot observar que la funció de cost en tots els algoritmes és lineal i no exponencial, tal com hauria de ser. Això és degut a les especificacions del processador, ja que només té 4 nuclis i no permet que els comptadors treballin de manera simultània. Això provoca que, a l'usar un nombre de processos més elevat que el de nuclis o \textit{threads virtuals}, en cas que en tingués, no es pot realitzar una simulació paral·lela. Gràcies a això també es pot explicar per què la fase \textit{KE}, que és la que comporta més comunicació entre comptadors i subestació, és la fase més costosa usant els algoritmes \texttt{HashedAlgorithm} i \texttt{PollardsLambda}, on el cost del logaritme és més baix.
 \\
 \\
  A la \textit{Figura \ref{fig:comparisons}} es compara el cost del protocol en funció de \texttt{PollardsLambda} i \texttt{HashedAlgorithm}. No s'ha pogut comparar en aquest gràfic \texttt{BruteForce}, doncs el cost és molt més alt.
@@ -184,18 +186,18 @@ Encara que l'algoritme cachejat tingui un cost teòric $\mathcal{O}(1)$ a l'hora
 \end{figure}
 A més a més, és important l'ús de la memòria principal en aquest tipus d'algoritmes, ja que guardant $2^{20}$ relacions, s'ha necessitat \texttt{1 GB} en memòria.
 \section{Comparació de \cite{recsi} i \cite{busom}}
-S'ha comparat el cost en temps dels protocols \cite{recsi} i \cite{busom} en funció del nombre de comptadors i de missatges. Encara que \cite{busom} té un establiment de claus més senzilla que \cite{recsi}, aquest últim té una comunicació menys costosa a la fase \textit{Consumption Transmission}, per aquest motiu, es pot deduir que, en el cas de tenir moltes rondes, és aconsellable usar \cite{recsi}. No obstant això, veiem a la \textit{Figura \ref{fig:prottime16}}, que en la simulació en comunitats de $16$ comptadors, no es pot apreciar una millora en \cite{recsi}. Això és a causa de que la simulació s'ha realitzat en un mateix ordenador i el cost en temps del pas de lectures dels comptadors a la subestació és negligible, cosa que no es pot assumir que, en un cas real, existeixi sempre aquesta propietat.
+S'ha comparat el cost en temps dels protocols \cite{recsi} i \cite{busom} en funció del nombre de comptadors i de missatges. Encara que \cite{busom} té un establiment de claus més senzill que \cite{recsi}, aquest últim té una comunicació menys costosa a la fase \textit{Consumption Transmission}, per aquest motiu, es pot deduir que, en el cas de tenir moltes rondes, és aconsellable usar \cite{recsi}. No obstant això, veiem a la \textit{Figura \ref{fig:prottime16}}, que en la simulació en comunitats de $16$ comptadors, no es pot apreciar una millora en \cite{recsi}. Això és a causa que la simulació s'ha realitzat en un mateix ordinador i el cost en temps del pas de lectures dels comptadors a la subestació és negligible, cosa que no es pot assumir que, en un cas real, existeixi sempre aquesta propietat.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=9cm]{imgs/cost/16compt.png}
 	\caption{Costos experimentals dels protocols \cite{recsi} i \cite{busom} en comunitats de 16 comptadors.}
 	\label{fig:prottime16}
 \end{figure}
-Per aquest motiu, s'ha realitzat un altre anàlisi en comunitats de 32 comptadors. Així doncs, l'ordinador no pot realitzar la simulació de manera paral·lela. D'aquesta forma privem a la subestació d'una comunicació eficient, ja que tarda més en rebre totes les lectures en una ronda. Es pot observar a la \textit{Figura \ref{fig:prottime32}} que, a mesura que el nombre de missatges augmenta, \cite{recsi} es torna més eficient.
+Per aquest motiu, s'ha realitzat analitzat en comunitats de 32 comptadors. Així doncs, l'ordinador no pot realitzar la simulació de manera paral·lela. D'aquesta forma privem a la subestació d'una comunicació eficient, ja que tarda més a rebre totes les lectures en una ronda. Es pot observar a la \textit{Figura \ref{fig:prottime32}} que, a mesura que el nombre de missatges augmenta, \cite{recsi} es torna més eficient.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=9cm]{imgs/cost/32compt.png}
-	\caption{Cost experimentals dels protocols \cite{recsi} i \cite{busom} en comunitats de 32 comptadors.}
+	\caption{Costs experimentals dels protocols \cite{recsi} i \cite{busom} en comunitats de 32 comptadors.}
 	\label{fig:prottime32}
 \end{figure}
 
@@ -214,19 +216,19 @@ A més a més, sabem que, el cost de la fase de \textit{Consumption Transmission
 \[Cost_{CT_2}(R) = Cost_{CT_1}(R) \cdot k_{\textrm{comunicació}}, \qquad k_{\textrm{comunicació}} \ge 1\]
 Substituint el cost de la fase de \textit{Consumption Transmission} de \cite{busom} en l'inequació veiem que:
 \[Cost_{KE_2} + Cost_{CT_1}(R) \cdot k_{\textrm{comunicació}} \le  Cost_{2}(|Fragments|) + Cost_{CT_1}(R)\]
-Podem observar que, si $k_{\textrm{comunicació}} = 1$, és  a dir, el cost de comunicació és negligible, és millor usar \cite{busom} ja que el cost de la fase \textit{Key Establishment} és més petit que el cost del mateix protocol $Cost_{KE_2} \le Cost_{2}$. Per altra banda, si $k_{\textrm{comunicació}} > 1$, la tria depèn, bàsicament, del nombre de rondes $R$, ja que, tard o d'hora, com que la fase de \textit{Consumption Transmission} de \cite{recsi} és menys costosa que \cite{busom}, aquest primer tindrà un avantatge a partir d'un nombre determinat de rondes.
+Podem observar que, si $k_{\textrm{comunicació}} = 1$, és  a dir, el cost de comunicació és negligible, és millor usar \cite{busom}, ja que el cost de la fase \textit{Key Establishment} és més petit que el cost del mateix protocol $Cost_{KE_2} \le Cost_{2}$. Per altra banda, si $k_{\textrm{comunicació}} > 1$, la tria depèn, bàsicament, del nombre de rondes $R$, ja que, tard o d'hora, com que la fase de \textit{Consumption Transmission} de \cite{recsi} és menys costosa que \cite{busom}, aquest primer tindrà un avantatge a partir d'un nombre determinat de rondes.
 \[Cost_{KE_2} <  Cost_{2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
 Es pot entendre $Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})$ com la diferència en el temps entre les fases de \textit{Consumption Transmission} dels dos protocols en un determinat nombre de rondes $R$. La inequació es pot desenvolupar una mica més, partint el cost del protocol \cite{busom}, sabent que
 $Cost_{2}(|Fragments|) = Cost_{KE_2} + Cost_{CT_2}(|Fragments|)$.
 \[Cost_{KE_2} <  Cost_{KE_2} + Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
 Finalment, podem simplificar treient $Cost_{KE_2}$ de la inequació, obtenint:
 \[0 < Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})\]
-D'aquesta manera, podem concloure que si $Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})$ és positiu, serà millor usar \cite{ busom}. Si el resultat dóna negatiu, la millor opció serà \cite{recsi}, ja que el cost de comunicació és suficientment elevat com per ser més ràpid que \cite{busom}.  De forma resumida, si $\ \ |Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})| > Cost_{CT_2}(|Fragments|)$ la millor opció serà \cite{recsi}.
+D'aquesta manera, podem concloure que si $Cost_{CT_2}(|Fragments|) + Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})$ és positiu, serà millor usar \cite{ busom}. Si el resultat dóna negatiu, la millor opció serà \cite{recsi}, ja que el cost de comunicació és suficientment elevat per ser més ràpid que \cite{busom}.  De forma resumida, si $\ \ |Cost_{CT_1}(R) \cdot (1 - k_{\textrm{comunicació}})| > Cost_{CT_2}(|Fragments|)$ la millor opció serà \cite{recsi}.
 \section{Simulació usant el dataset}
-Per comprovar d'una altra manera que hi ha una correlació entre la mida dels missatges i el temps en el protocol, s'ha usat el \textit{dataset} mencionat a l'inici de la \textit{Part \ref{sec:dataset}}. Per tal de realitzar-ho, s'ha comparat el cost que té la subestació en rebre la lectura general en les diferents rondes de la fase \textit{Consumption Transmission}. D'aquesta manera, es troba una funció semblant a la que es troba en les lectures dels consumidors, tal i com es veu a la \textit{Figura \ref{fig:cost-kaggle}}. Cal dir, que per veure els resultats de manera més significativa, s'ha usat $200$ simulacions de comunitats de $32$ comptadors\footnote{D'aquesta manera, la llargada màxima del missatge augmenta 4 bits.} i fent ús del algoritme \texttt{BruteForce} per realitzar el logaritme discret. Per aquesta raó, no s'ha usat el \texttt{HashedAlgorithm} ja que aquest no augmenta en cada ronda sinó al principi, abans de la fase \textit{Key Establishment}.
+Per comprovar d'una altra manera que hi ha una correlació entre la mida dels missatges i el temps en el protocol, s'ha usat el \textit{dataset} mencionat a l'inici de la \textit{Part \ref{sec:dataset}}. Per tal de realitzar-ho, s'ha comparat el cost que té la subestació en rebre la lectura general en les diferents rondes de la fase \textit{Consumption Transmission}. D'aquesta manera, es troba una funció semblant a la que es troba en les lectures dels consumidors, tal com es veu a la \textit{Figura \ref{fig:cost-kaggle}}. Cal dir, que per veure els resultats de manera més significativa, s'ha usat $200$ simulacions de comunitats de $32$ comptadors\footnote{D'aquesta manera, la llargada màxima del missatge augmenta 4 bits.} i fent ús de l'algoritme \texttt{BruteForce} per realitzar el logaritme discret. Per aquesta raó, no s'ha usat el \texttt{HashedAlgorithm}, ja que aquest no augmenta en cada ronda sinó al principi, abans de la fase \textit{Key Establishment}.
 \\
 \\
-En el gràfic del cost del protocol en funció de la ronda, es pot observar un pic a la primera ronda. Això és deu possiblement a que és la primera iteració de la fase \textit{Consumption Transmission} i s'ha de carregar el codi a memòria, cosa que comporta un cost en el temps, tant pels comptadors com per la subestació. Per aquest motiu, aquest pic només passa en la primera iteració. Aquest comportament també passa usant els altres algoritmes per realitzar el logaritme discret.
+En el gràfic del cost del protocol en funció de la ronda, es pot observar un pic a la primera ronda. Això és deu possiblement a què és la primera iteració de la fase \textit{Consumption Transmission} i s'ha de carregar el codi a memòria, cosa que comporta un cost en el temps, tant pels comptadors com per la subestació. Per aquest motiu, aquest pic només passa en la primera iteració. Aquest comportament també passa usant els altres algoritmes per realitzar el logaritme discret.
 \begin{figure}[H]
 	
 	\centering

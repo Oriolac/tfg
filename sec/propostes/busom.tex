@@ -1,6 +1,6 @@
 \begin{document}
 
-El protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la subestació només sabrà el valor en conjunt d'un barri de comptadors agregats, és a dir, el sumatori de cadascuna de les seves lectures. En aquesta proposta, es vol utilitzar una clau pública per tal d'encriptar les dades i, gràcies a la propietat homomòrfica d'ElGamal, rebre només el resultat en conjunt. Per tal de complir aquest objectiu, hi ha una fase de configuració de claus i una altra, que tractarà l'enviament xifrat dels missatges, tal i com es mostra en la \textit{Figura \ref{fig:busom}}.
+El protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la subestació només sabrà el valor en conjunt d'un barri de comptadors agregats, és a dir, el sumatori de cadascuna de les seves lectures. En aquesta proposta, es vol utilitzar una clau pública per a xifrar les dades i, gràcies a la propietat homomòrfica d'ElGamal, rebre només el resultat en conjunt. Per tal de complir aquest objectiu, hi ha una fase de configuració de claus i una altra, que tractarà l'enviament xifrat dels missatges, tal com es mostra en la \textit{Figura \ref{fig:busom}}.
 \begin{figure}
 	\centering
 	\includegraphics[width=14cm]{umls/busom.png}
@@ -10,20 +10,20 @@ El protocol proposat en \cite{busom} es basa en un sistema agregatiu, on la sube
 
 \subsubsection{Procediment}
 \myparagraph{Configuració del sistema}
-Al ser un protocol de tipus agregatiu utilitzant el sistema criptogràfic ElGamal amb la propietat homomòrfica en la multiplicació, la configuració del sistema serà la següent:
+En ser un protocol de tipus agregatiu utilitzant el sistema criptogràfic ElGamal amb la propietat homomòrfica en la multiplicació, la configuració del sistema serà la següent:
 \begin{itemize}
 	\item Dos primers $p$ i $q$ sent $p = 2q+1$.
 	\item Un generador $g \in \mathbb{Z}_p^*$ d'ordre $q$.
 	\item Un sistema de certificats digitals perquè la subestació reconegui els comptadors intel·ligents del seu barri.
 \end{itemize}
 \myparagraph{Establiment de clau pública Diffie-Hellman}
-Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman usant la operació de multiplicació per tal de rebre una clau pública $y$ tal que $y=g^{\sum_{i=1}^{n} x_i}$, sent $x_i$ la clau privada del comptador $M_i$. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. 
+Per tal d'escollir la clau pública, es proposa usar el sistema d'intercanvi de claus Diffie-Hellman usant l'operació de multiplicació per a rebre una clau pública $y$ tal que $y=g^{\sum_{i=1}^{n} x_i}$, sent $x_i$ la clau privada del comptador $M_i$. \cite{busom} posa en pràctica aquest intercanvi de claus per tal de xifrar els consums d'electricitats dels comptadors a la subestació. 
 \\
 \\
 Cada comptador té la seva clau secreta\footnote{La clau secreta és creada de manera aleatòria.} $x_i \in \mathbb{Z_q^*} $ i fa públic $y_i = g^{x_i}$ juntament amb una prova zero-knowledge\footnote{Protocol que estableix un mètode per comprovar quelcom sense haver de revelar la veracitat de la declaració. En aquest cas, s'ha de comprovar que el comptador forma part del conjunt o barri.} sobre $log_g(y_i)$, on cada comptador demostra que coneix el seu valor secret $x_i$, per tal que la subestació ho verifiqui i faci calcular $y = \prod_{i=1}^{n} y_i$ a les subestacions.
 \\
 \\
-Podem observar que és una versió diferent del protocol explicat a la \textit{Secció \ref{sec:diffie-hellman}}, on s'usava la operació de potència per establir la clau pública del sistema.
+Podem observar que és la versió diferent del protocol explicat a la \textit{Secció \ref{sec:diffie-hellman}}, on s'usava l'operació de potència per establir la clau pública del sistema.
 \myparagraph{Transmissió del consum}
 No obstant s'ha establert una clau per tal de xifrar els consums, encara no s'ha aconseguit privacitat en les llars, ja que la subestació sabria el valor de les lectures. Per tal de fer-ho, s'utilitza la propietat homomòrfica d'ElGamal per tal de protegir les dades. Per tal d'entendre bé aquest procés, relaxarem el problema de manera que només es fa una iteració per explicar la fase de transmissió de consum. El nombre que representa la iteració, $j$, en aquest cas, serà $j = 1$.
 \begin{enumerate}
@@ -38,7 +38,7 @@ No obstant s'ha establert una clau per tal de xifrar els consums, encara no s'ha
 	\label{en:busom-s1}
 	\item Cada comptador, al rebre $c$, computa:
 	\[T_i = c^{x_i} g^{z_i}\]
-	i envia el seu resultat a la subestació. Després d'això, el comptador ja no necessita $z_i$ i pot esborrar-lo de la memòria. Aquest pas és necessari per tal que la subestació pugui eliminar $y^r$ i $g^z$ del missatge xifrat $C$.\label{en:busom-m1}
+	i envia el seu resultat a la subestació. Després d'això, el comptador ja no necessita $z_i$ i pot esborrar-lo de la memòria. Aquest pas és necessari perquè la subestació pugui eliminar $y^r$ i $g^z$ del missatge xifrat $C$.\label{en:busom-m1}
 	\item Un cop la subestació ha rebut tots els $T_i$ de cada comptador, calcula:
 	\[D = d \cdot (\prod_{i=1}^{n} T_i)^{-1} = g^m, \qquad \prod_{i=1}^{n} T_i = (g^{r})^x \cdot g^z = y^r \cdot g^z\]
 	D'aquesta manera, la subestació troba el valor agregat sense el valor aleatori de cada comptador ni el factor aleatori d'usar \textit{ElGamal}.
@@ -57,9 +57,9 @@ La subestació, per tal d'aconseguir aquesta lectura, s'ha de desviar del protoc
 	\begin{enumerate}
 		\item En lloc d'enviar $c \in C$ tal i com es diu en el pas \ref{en:busom-s1}, la subestació envia $\hat{c}$ generant de manera aleatòria un valor $v$:
 		\[\hat{c} = g^v \quad t.q \quad v \in_R {\mathbb{Z}_{q}}\]
-		\item Els comptadors, realitzaran de forma normal l'operació del pas \ref{en:busom-m1}, retornant com a resultat:
+		\item Els comptadors realitzaran de forma normal l'operació del pas \ref{en:busom-m1}, retornant com a resultat:
 		\[\hat{T}_i = (\hat{c})^{x_i} \cdot g^{z_i} = (g^v)^{x_i} \cdot g^{z_i} = y_i^v \cdot g^{z_i}\]
-		\item Gràcies a que el valor $y_i$ de cada comptador és la seva clau pública, la subestació pot saber $g^{z_i}$ realitzant:
+		\item Gràcies el fet que el valor $y_i$ de cada comptador és la seva clau pública, la subestació pot saber $g^{z_i}$ realitzant:
 		\[g^{z_i} = \hat{T}_i \cdot (y_i^v)^{-1}\]
 		D'aquesta manera, sabent que $E_y(g^{m_i + z_i}) = (c_i, d_i) = (g^{r_i}, \; g^{m_i + z_i}) \cdot y^{r_i}$, la subestació pot saber $E_y(g^{m_i})$:
 		\[E_y(g^{m_i}) = (c_i, d_i \cdot (g^{z_i})^{-1}) = (g^{r_i}, \; g^{m_i} \cdot y^{r_i}) = (c', d')\]
@@ -102,19 +102,19 @@ Aquest atac es pot realitzar de manera distribuïda en tots els comptadors intel
 	\label{fig:garra}
 \end{figure}
 \newpage
-Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{repair-busom} es proposa una modificació del protocol per a que al final de cada ronda, la subestació hagi d'estar forçada a enviar als comptadors una prova de que s'ha executat el protocol de manera correcta. El diagrama de seqüència d'aquest nou sistema es troba la \cref{fig:garra}. En cas de no superar la prova, els comptadors requeriran tornar a realitzar una nova configuració de claus. En el procediment s'afegeix:
+Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{repair-busom} es proposa una modificació del protocol perquè al final de cada ronda, la subestació hagi d'estar forçada a enviar als comptadors una prova de què s'ha executat el protocol de manera correcta. El diagrama de seqüència d'aquest nou sistema es troba la \cref{fig:garra}. En cas de no superar la prova, els comptadors requeriran tornar a realitzar una nova configuració de claus. En el procediment s'afegeix:
 \begin{enumerate}
-	\item En la \textit{configuració del sistema}, s'afegirà del original:
+	\item En la \textit{configuració del sistema}, s'afegirà de l'original:
 	\begin{itemize}
 		\item La constant $l \ge 16 $ que satisfà \[l \cdot n \le \lfloor log_2 \; p \rfloor - 64\]
 		\item \textit{Precomputació de taula de primers}. Cada comptador $M_i$ guarda una taula amb tots els enters primers $p_i$, de llargada en bits com a màxim $l$, $\lceil log_2 \, p_i \rceil \le l$, que pertanyen a $\mathbb{Z}_q^*$ i estan generats per g.
-		\item \textit{Vector de precomputació}. La subestació computa i guarda un vector $a = (a_0, \dots, a_{m_{\textrm{max}}})$ tal que \[a_i = (g^i)^{-1}, \quad i \in \{0, \cdots, m_{\textrm{max}}\}\] sent $m_{\textrm{max}}$ una fita superior de la suma de totes les lectures del comptadors del sistema agregat.
+		\item \textit{Vector de precomputació}. La subestació computa i guarda un vector $a = (a_0, \dots, a_{m_{\textrm{max}}})$ tal que \[a_i = (g^i)^{-1}, \quad i \in \{0, \cdots, m_{\textrm{max}}\}\] sent $m_{\textrm{max}}$ una fita superior de la suma de totes les lectures dels comptadors del sistema agregat.
 	\end{itemize}
 	\item L'\textit{establiment de claus} no varia de la versió original \cite{busom}, ja que no hi ha incidències de seguretat en aquesta fase del sistema.
-	\item Per tal d'explicar els canvis en la \textit{transmissió del consum}, s'ha preferit explicar tot el procès de comunicació.
+	\item Per tal d'explicar els canvis en la \textit{transmissió del consum}, s'ha preferit explicar tot el procés de comunicació.
 	\begin{enumerate}
 		\item La subestació demana a tots els comptadors intel·ligents que pertanyen al seu barri les seves lectures mitjançant un missatge de sol·licitud.
-		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna en la taula de precomputació. Llavors, el missatge xifrat està composat per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
+		\item Cada comptador $M_i$ genera un aleatori $z_i \in_R \mathbb{Z_q^*}$ i agafa un primer aleatori $p_i < 2^l$ de la seva memòria interna en la taula de precomputació. Llavors, el missatge xifrat està compost per la lectura en el temps actual $m_i$, el generador $g$, el valor aleatori $z_i$ i el nou primer aleatori $p_i$ de tal manera:
 		\[E_y(p_i \cdot g^{m_i + z_i}) = (c_i, d_i) = (g^r, p_i \cdot g^{m_i + z_i} \cdot y^{r_i})\]
 		\item La subestació agrega tots els missatges xifrats rebuts
 		\[(c, d) = \Big( \prod c_i, \; \prod d_i \Big) = (g^r,\; P \cdot g^{m + z} \cdot y^r)\]
@@ -125,7 +125,7 @@ Per tal de resoldre el problema amb la privacitat recentment esmentat, en \cite{
 		Com que $P < 2^{l \cdot n}$, ja que cada $p_i$ té, com a màxim, d'ordre de $l$ bits , la subestació podrà determinar $m$ mitjançant
 		\[D \cdot a_m  < 2^{l \cdot n}\]
 		A més a més, com que $D \cdot a_m = P \cdot g^m \cdot a_m = P \cdot g^m \cdot (g^m)^{-1} = P$, la subestació pot factoritzar $P$ i enviar els primers resultants en una llista ordenada $p_v$ a cada comptador.
-		\item Cada comptador comprova que la llargada de $p_v$ és $|p_v| = n$ i que $p_i \in p_v$. En cas que la comprovació d'algun comptador fallés, aquest hauria de demanar tornar a la fase d'establiment de claus i totes les claus publiques haurien de ser renovades. D'aquesta manera, els comptadors saben que la subestació no els ha estat enganyant per tal d'atacar la seva privacitat
+		\item Cada comptador comprova que la llargada de $p_v$ és $|p_v| = n$ i que $p_i \in p_v$. En cas que la comprovació d'algun comptador fallés, aquest hauria de demanar tornar a la fase d'establiment de claus i totes les claus públiques haurien de ser renovades. D'aquesta manera, els comptadors saben que la subestació no els ha estat enganyant per tal d'atacar la seva privacitat.
 		
 	\end{enumerate}
 \end{enumerate}

@@ -5,7 +5,7 @@ Els sistemes pertorbatius es caracteritzen per afegir a les lectures un soroll p
 	\item Poder realitzar el càlcul del consum total de totes les llars donades un cert instant en el temps.
 	\item Evitar poder mesurar el consum en un instant de temps determinat d'una llar.
 \end{itemize}
-Per aquest motiu, si cada llar envia el seu consum periòdicament a la subestació, pot organitzar aquests valors com una matriu, tal que la suma d'una fila és el consum total del consumidor donat un temps determinat i la suma d'una columna és el consum de totes les llars en un temps determinat. Quan el comptador vulgui privacitat en un moment sensible, es proposa enviar les lectures enmascarades de manera que:
+Per aquest motiu, si cada llar envia el seu consum periòdicament a la subestació, pot organitzar aquests valors com una matriu, tal que la suma d'una fila és el consum total del consumidor donat un temps determinat i la suma d'una columna és el consum de totes les llars en un temps determinat. Quan el comptador vulgui privacitat en un moment sensible, es proposa enviar les lectures emmascarades de manera que:
 \[\sum_{i=1}^{N} c_i \approx \sum_{i=1}^{N} (c_i + x_i)\]
 on $N$ és el nombre total de mesures, $x_i$ és un valor aleatori donada una distribució probabilística i $c_i$ és una mesura de consum individual. També es pot veure:
 \[\sum_{i=1}^{N} c_i = \sum_{i=1}^{N} (c_i + x_i) - e_0\]
