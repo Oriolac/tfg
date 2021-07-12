@@ -1,0 +1,21 @@
+@startuml recsi1
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+hnote across: Key Stablishment
+loop for each chunk s<sub>i j</sub> of s<sub>i</sub>
+    "Smart Meter M<sub>i</sub>" -> "Substation": sendSecretKey(//s<sub>i j</sub>// )
+    note left
+        Secret key : <latex>s_{i}</latex>
+    end note 
+    Substation -> Substation : computeChunk(s<sub>1 j</sub>, s<sub>2 j</sub>, ..., s<sub>n j</sub>)
+    note right
+    <latex>chunk_j = \sum_{i=1}^{n} s_{i j}</latex>
+    end note
+end
+Substation -> Substation : computeSubstationKey()
+note right
+    <latex>s_0' = \sum_{j = 1}^{l} (2^{13 \cdot (j - 1)} \cdot chunk_j) </latex>
+    <latex>s_0' = \sum_{1 = 1}^{n}</latex>
+    Substation Key: <latex>s_0 = - s_0' (mod \; p)</latex>
+end note
+@enduml

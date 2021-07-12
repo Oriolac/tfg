@@ -1,0 +1,16 @@
+@startuml busom2
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+hnote across: Key Stablishment
+"Smart Meter M<sub>i</sub>" -> "Substation": sendPublicKey(//y<sub>i</sub>// , //Cert<sub>i</sub>//)
+note left
+    Secret key : <latex>x_{i}</latex>
+    Public key : <latex>y_{i} = g^{x_i}</latex>
+end note 
+Substation --> "Smart Meter M<sub>i</sub>" :  // y<sub>1</sub>, ... , y<sub>n</sub> ; Cert<sub>1</sub>, ... , Cert<sub>n</sub> //
+note right: if //Cert<sub>i</sub>// is correct
+note left
+    <latex>y = \prod_{i = 1}^{n} y_i</latex>
+    Group public key: <latex>y</latex>
+end note
+@enduml

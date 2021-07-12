@@ -1,0 +1,18 @@
+@startuml recsi2
+!include themes/puml-theme-cerulean-outline.puml
+skinparam backgroundColor #FFFFFF
+hnote across: Consumption transmission
+loop for each message m<sub>i</sub> in M<sub>i</sub> at time t
+    "Smart Meter M<sub>i</sub>" -> "Substation" : //C<sub>i</sub>//
+    note left
+        Reading: <latex>m_{i}</latex>
+        <latex>C_i = m_i \cdot P + s_i \cdot H(t) </latex>
+    end note
+    Substation -> Substation : compute(C<sub>1</sub>, C<sub>2</sub>, ..., C<sub>n</sub>)
+    note right
+        <latex>C = \sum_{i = 1}^{n} C_i = m \cdot P + \sum_{i = 1}^{n} s_i \cdot H(t) </latex>
+        <latex>D = C + s_o \cdot H(t) = m \cdot P +s \cdot H(t) =  m \cdot P</latex>
+        <latex>m = \sum_{i=1}^{n} m_i = log_P(D)</latex>
+    end note
+end
+@enduml
