@@ -177,7 +177,6 @@ Els comptadors intel·ligents són dispositius domèstics que recullen i envien
 el consum de l'electricitat a un proveïdor d’energia en intervals de temps reduïts. El consumidor pot saber el seu consum elèctric en tot moment i la seva despesa de manera més precisa amb possibles preus i tarifes personalitzades depenent del consum horari, al permetre la telelectura.
 \begin{figure}[H]
 	\includegraphics[width=15cm]{umls/network.png}
-	\caption{Diagrama de xarxa simple d'un sistema de comptadors.}
 \end{figure}
 A causa d'aquest constant enviament d'informació,
 es poden fer millors prediccions i tendències de consum de manera que la producció pugui estar més a prop de l'energia que es necessita, és a dir, la producció d'energia es pot ajustar més al consum real d'aquesta. A més a més, el distribuïdor d'energia no té la necessitat de revisar manualment el consum i la lectura del comptador elèctric en cada llar.
@@ -400,13 +399,13 @@ En l'actualitat s'ha proposat tres tipus de mecanismes o estratègies per tal de
 	\item \textbf{Agregatiu}. Els comptadors s'agreguen en comunitats per tal de sumar les seves lectures abans de transmetre-les a la subestació. Les dades solen ser agregades gràcies a un \textit{dealer} o distribuïdor, o fent ús de xifratge homomòrfic. Els protocols criptogràfics han de garantir que la companyia elèctrica únicament pot rebre la suma dels consums i en cap cas podrà assabentar-se de les lectures individuals. Així i tot, això implicarà l'ús de tècniques computacionals segures per tal de prevenir atacs contra la privacitat.
 \end{itemize}
 \section{Sistemes pertorbatius}
-\subfile{sec/pertob.tex}
+%\subfile{sec/pertob.tex}
 \section{Sistemes d'anonimat}
-\subfile{sec/anonimitat.tex}
+%\subfile{sec/anonimitat.tex}
 \section{Sistemes agregatius}
 Els sistemes agregatius no es preocupen de la identitat del comptador ni intenten manipular el significat de les lectures per tal de no suggerir més informació de la necessària. En comptes, s'agreguen els comptadors en un conjunt anomenat \textit{barri} o \textit{comunitat} per tal que la subestació només pugui saber el consum global, evitant així informació individual. El mètode més popular per tal de passar les dades de manera xifrada és usant xifratge homomòrfic. 
 \subsection{Proposta de Busom}
-\subfile{sec/propostes/busom.tex}
+%\subfile{sec/propostes/busom.tex}
 \newpage
 \subsection{L'actual proposta}
 El protocol \cite{recsi} es basa en un sistema agregatiu, ja que la subestació només tindrà a la seva disposició el sumatori de lectures dels comptadors que pertanyin al seu conjunt. Per tal d'aconseguir només la lectura total del barri tenint les dades de cada llar protegides, es fa ús de xifratge homomòrfic.

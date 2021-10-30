@@ -85,9 +85,35 @@ Universitat de Lleida
 \section{Introducció}
 \subsection{Plantejament}
 \begin{frame}{Introducció}
+	\only<1-2>{
 	\begin{figure}
 		\includegraphics[width=10cm]{../umls/network.png}
-	\end{figure}
+	\end{figure}} \pause
+	\only<3>{
+	\begin{figure}
+		\includegraphics[width=8cm]{images/privacy.png}
+	\end{figure}}
+	\only<4>{
+	\begin{figure}
+		\includegraphics[width=4cm]{images/privacy.png}
+	\end{figure}}
+\begin{block}{Problema}
+	Un enviament del consum en interval de temps reduïts provoca una pèrdua en la privadesa de la llar.
+\end{block}
+	\only<3-4>{\uncover<4>{
+		\begin{multicols}{2}
+			
+			\begin{figure}
+				\includegraphics[width=2.5cm]{images/udl}
+			\end{figure}
+		\newpage
+		\begin{figure}
+			\vspace*{0.35cm}
+			Criptografia i Grafs
+		\end{figure}
+			
+		\end{multicols}
+		}}
 \end{frame}
 \subsection{Objectius}
 \begin{frame}{Introducció}{Objectius}
@@ -97,7 +123,7 @@ Universitat de Lleida
 		\item Posar en context el xifratge homomòrfic i el criptosistema asimètric ElGamal.
 		\item Implementar un client que simuli un comptador intel·ligent.
 		\item Implementar un servidor que simuli una subestació d'una comunitat de comptadors.
-		\item Realitzar un estudi dels costs del protocol.
+		\item Realitzar un estudi dels costs dels protocols.
 	\end{itemize}
 \end{frame}
 %\section{Estat de l'art}
@@ -135,7 +161,7 @@ lectures abans de transmetre-les a la subestació.
 				\item Xifratge homomòrfic.
 				\begin{itemize}
 					\item Intercanvi de claus.
-					\item Distribuïdor de claus.
+					\item Distribuïdora de claus.
 				\end{itemize}
 			\end{itemize}
 		}
@@ -146,10 +172,19 @@ lectures abans de transmetre-les a la subestació.
 \begin{frame}{Proposta \cite{busom}}
 \begin{itemize}
 	\item Proposta agregativa.
-	\item ElGamal aprofitant homorfisme sobre la multiplicació.
+	\item ElGamal aprofitant la seva propietat d'\alert<2>{homorfisme}.
+	\only<1>{
+	\begin{block}{Funció de xifratge}
+		$ E_y(m) = (g^r, \ y^r \cdot m) $
+	\end{block}
+	\begin{block}{Funció de desxifratge}
+		$ m = D_y(c) = c_2 \cdot ((c_1)^d)^{-1} =  y^r \cdot m \cdot ((g^r)^d)^{-1}, \quad y = g^d $
+	\end{block}}
+	\only<2>{
+	\[E_(g^{m_1}) \cdot E_(g^{m_2}) = E(g^{m_1} \cdot g^{m_2}) = E(g^{m_1 + m_2})\]
 	\begin{itemize}
 		\item Es pot usar tant en $\mathbb{Z}_p$ com $E(\mathbb{Z}_p)$.
-	\end{itemize}
+	\end{itemize}}
 	\item Fases:
 	\begin{itemize}
 		\item Configuració de claus.\\Usa intercanvi de claus en lloc d'un distribuïdor de claus.
@@ -166,7 +201,7 @@ lectures abans de transmetre-les a la subestació.
 		\end{figure}
 	\newpage
 	\begin{itemize}
-		\item $M_i$ té la clau secreta $x_i \in \mathbb{Z}_q^* $ i la clau pública $y_i = g^{x_i}$
+		\item $M_i$ té la clau secreta $x_i \in \mathbb{Z}_p $ i la clau pública $y_i = g^{x_i}$
 		\item Intercanvi de claus Diffie-Hellman: $y = g^{\sum_{i=1}^{n} x_i}$
 		
 	\end{itemize}
@@ -181,25 +216,31 @@ lectures abans de transmetre-les a la subestació.
 		\end{figure}
 		\newpage
 		\begin{itemize}
-%			\tiny
-			\only<1-2>{\item \small Cada comptador $M_i$ genera un valor aleatori i envia \normalsize $E_y(g^{m_i+z_i}) = (c_i, d_i)$}
+			\only<1-2>{\item \small Cada comptador $M_i$ genera un valor aleatori $z_i$ i envia \normalsize $E_y(g^{m_i+z_i}) = (c_i, d_i)$}
 			\only<2>{\item \small La subestació agrega tots els xifrats:
 			\begin{align*}
 				C &= (\prod_{i=1}^{n} c_i, \ \prod_{i=1}^{n} d_i)\\
-				&= (g^r, \ y^r \cdot g ^{\sum_{i=1}^{n} m_i} \cdot g^z)\\
+				&= (g^{\sum_{i=1}^{n} r_i}, \ y^r \cdot g ^{\sum_{i=1}^{n} m_i} \cdot g^{\sum_{i=1}^{n} z_i})\\
 				&= (g^r, \ y^r \cdot g ^{m + z})\\
 				&= (c, d)
 			\end{align*}}
 			\only<3>{\item Cada comptador $M_i$ rep $c$ i envia la seva contribució perquè la subestació realitzi el logaritme discret.}
-			\only<3>{\[T_i = c^{x_i} \cdot g^{z_i}\]}
+			\only<3>{
+				\begin{align*}
+					T_i &= c^{x_i} \cdot g^{z_i}\\
+					&= g^{r_i \cdot x_i} \cdot g^{z_i}
+				\end{align*}
+			}
 			\only<4>{\item La subestació agrega les contribucions de manera que:
 			\begin{align*}
 				T &= \prod_{i=1}^{n} T_i = c^x \cdot g^z = g^{r \cdot x + z}\\
 				&= y^r \cdot g^z, \qquad x = \sum_{i=1}^{n} x_i	
 			\end{align*}}
 		\only<4>{\item Troba $g^m$ realitzant \[g^m = d \cdot T^{-1}\]}
-		\only<5>{\item Finalment, realitza el logaritme discret per tal de trobar $m$:
+		\only<5-6>{\item Finalment, realitza el logaritme discret per tal de trobar $m$:
 		\[m = log_g(D)\]}
+		\uncover<6>{
+		\item \alert{En \cite{repair-busom} s'explica com realitzar un atac en \cite{busom} per rebre les lectures dels comptadors en una ronda determinada i una sol·lució possible.}}
 		\end{itemize}
 	\end{multicols}
 \end{frame}
@@ -208,11 +249,17 @@ lectures abans de transmetre-les a la subestació.
 \begin{frame}{Proposta \cite{recsi}}
 	\begin{itemize}
 		\item Proposta agregativa.
+		\item Explicat usant criptografia de corba el·líptica.
 		\item Fases:
 		\begin{itemize}
 			\item Configuració de claus.
-			\\Usa intercanvi de claus \alert{amb una restricció} en lloc d'un distribuïdor de claus.
-			\[k_{Sst} = - \sum_i^{N} k_{m_i}\]
+			\\Usa intercanvi de claus \alert{amb una restricció} en lloc d'un distribuïdor de claus, com estava originalment.
+			\begin{multicols}{2}
+			\[ \sum_{i}^{N+1} s_i = 0\]
+			\only<2>{
+			\[s_{sst} = - \sum_i^{N} s_{m_i}\]
+			}
+	\end{multicols}
 			\item Transmissió del consum.
 		\end{itemize}
 	\end{itemize}
@@ -233,7 +280,7 @@ lectures abans de transmetre-les a la subestació.
 			\only<2-3>{\item  Aquesta és dividida en $l$ fragments de, com a màxim, 13 bits:
 			\[s_i = (s_{il} || ... || s_{i2} || s_{i1})\]}
 			\only<3>{\item  Per tal de saber només la suma dels fragments, s'usa el protocol \cite{busom}.}
-			\only<4-5>{\item En cada iteració, la subestació obtindrà:
+			\only<4-5>{\item En cada iteració $j$, la subestació obtindrà:
 			\[\sum_{i=1}^{n}s_{ij}\]}
 			\only<5-6>{\item La subestació concatenarà els diferents resultats:
 			\[s_0^{'} = \sum_{j=1}^{l} \Big( 2^{13 \cdot (j - 1)} \cdot \sum_{i=1}^{n} s_{ij} \Big)\]}
@@ -252,18 +299,21 @@ lectures abans de transmetre-les a la subestació.
 		\newpage
 		\begin{itemize}
 			\only<1>{\item Cada comptador $M_i$ transmet de manera xifrada:
-			\[C_i = m_i \cdot P + s_i + H(t)\]
+			\[C_i = m_i \cdot P + s_i \cdot H(t)\]
 			}
 			\only<2>{\item La subestació suma els xifrats obtenint un punt resultant C:
-			\[C = \sum_{i=1}^{n}c_i = m \cdot P + \sum_{i=1}^{n}s_i \cdot H(t)\]	
-			\[= m \cdot P + s_0^{'}\cdot H(t)\]}
+			\begin{align*}
+				C =& \ \sum_{i=1}^{n}c_i\\
+				=& \ \sum_{i=1}^{n} m_i \cdot P + \sum_{i=1}^{n}s_i \cdot H(t)\\
+				=& \ m \cdot P + s_0^{'}\cdot H(t)
+			\end{align*}}
 			\only<3>{\item La subestació eliminarà el soroll provocat per les claus secretes:
 			\begin{align*}
 			D &= C + s_0 \cdot H(t)\\
 			&= m \cdot P + (s_0^{'} + s_0) \cdot H(t)\\
 			& = m \cdot P
 			\end{align*}
-			\[m = \sum_{i=1}^{n} = log_P(D)\]
+			\[m = \sum_{i=1}^{n} m_i = log_P(D)\]
 			}
 		\end{itemize}
 	\end{multicols}
@@ -363,7 +413,7 @@ Arquitectura del projecte:
 \subsection{Comparació entre propostes}
 \begin{frame}{Anàlisi de costos}{Comparació entre propostes}
 	\begin{figure}
-		\includegraphics[width=14em]{images/32compt.png}
+		\includegraphics[width=20em]{images/32compt.png}
 	\end{figure}
 \end{frame}
 
@@ -408,8 +458,8 @@ Arquitectura del projecte:
 		\item Aprendre nous protocols i aprofitar el codi de l’aplicació i la llibreria per analitzar
 		entre altres protocols i veure el seu rendiment.
 		\item Aprendre computació quàntica i usar una llibreria per a veure si el protocol actual
-		pot tenir algun defecte de seguretat o possible vulnerabilitat en la transmissió de
-		claus o lectures.
+pot tenir algun defecte de seguretat o possible vulnerabilitat en la transmissió de
+claus o lectures.
 	\end{itemize}
 	
 \end{frame}
